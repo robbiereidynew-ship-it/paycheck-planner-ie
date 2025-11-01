@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Irish Paycheck Planner</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --card:#101722; --muted:#94a3b8; --text:#e6edf3; --accent:#7c5cff; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+      --ring: 0 0 0 2px var(--accent);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; color:var(--text); background:radial-gradient(1200px 800px at 90% -10%, #1a2230 10%, transparent 60%) #0b0f14}
+    a{color:var(--accent); text-decoration:none}
+
+    /* --- Header + Hero Banner --- */
+    header{position:sticky;top:0;z-index:50; backdrop-filter:saturate(180%) blur(8px); background:#0b0f1490; border-bottom:1px solid #1f2937}
+    nav{max-width:1320px;margin:auto;display:flex;gap:16px;align-items:center;padding:10px 16px}
+    nav .brand{font-weight:800;letter-spacing:.3px}
+    nav .spacer{flex:1}
+    nav a.jump{padding:8px 10px;border-radius:10px;color:#cbd5e1}
+    nav a.jump:hover{background:#111827}
+
+    .hero{position:relative;overflow:hidden;border-bottom:1px solid #1f2937;background:linear-gradient(135deg,#0f1420 0%,#131a2a 35%,#1b1440 100%)}
+    .hero-inner{max-width:1320px;margin:0 auto;padding:28px 16px 32px;display:grid;grid-template-columns:1.4fr .6fr;gap:20px;align-items:center}
+    .hero h1{margin:0 0 8px;font-size:2rem;line-height:1.2}
+    .hero p{margin:0;color:#b6c2d4}
+    .hero-graphics{position:relative;height:180px}
+    .hero-graphics img{position:absolute;inset:auto;max-width:48%;border-radius:18px;box-shadow:0 10px 40px #0006;border:1px solid #263445}
+    .hero-graphics img.i1{right:0;top:0;transform:rotate(-2deg)}
+    .hero-graphics img.i2{left:4%;bottom:-10px;transform:rotate(3deg)}
+
+    main{max-width:1320px; margin: 24px auto; padding: 0 16px 72px}
+
+    .grid{display:grid; gap:18px}
+    @media(min-width:980px){.grid.cols-2{grid-template-columns:1.1fr .9fr}}
+
+    section.card{background:linear-gradient(180deg,#101722,#0f141b); border:1px solid #1f2937; border-radius:22px; padding:20px; box-shadow:0 10px 34px #00000033; min-height:50vh; scroll-margin-top:80px}
+    h2{margin:4px 0 14px; font-size:1.3rem}
+    .section-hint{margin:-6px 0 14px; color:#9fb0c5; font-size:.92rem}
+    .tips{display:grid;gap:8px;margin-top:10px}
+    .tip{font-size:.9rem;color:#b8c6d9;display:flex;gap:10px;align-items:flex-start}
+    .tip i{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;background:#1f2937;border:1px solid #29394f;font-style:normal;font-weight:700;color:#9fb0c5}
+
+    .muted{color:var(--muted)}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:end}
+    .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; align-items:end}
+    .row4{display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; align-items:end}
+    label{display:block; font-size:.9rem; color:#a4b0c2; margin: 4px 0}
+    input, select{width:100%; padding:12px 12px; border-radius:12px; border:1px solid #223042; background:#0c1219; color:var(--text)}
+    input[type=range]{padding:0}
+    input:focus, select:focus{outline:none; box-shadow: var(--ring)}
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid #263445; border-radius:999px; font-size:.9rem; color:#cbd5e1}
+    .kpi{display:flex; justify-content:space-between; align-items:center; padding:14px; background:#0c1219; border:1px solid #243244; border-radius:14px}
+    .kpi strong{font-size:1.1rem}
+    .badge{font-size:.75rem; padding:4px 8px; border-radius:999px; background:#1f2937; color:#cbd5e1}
+    .mono{font-variant-numeric: tabular-nums}
+    .actions{display:flex; gap:8px; flex-wrap:wrap}
+    button{padding:10px 12px; border-radius:12px; border:1px solid #263445; background:#0f172a; color:var(--text); cursor:pointer}
+    button.primary{background:linear-gradient(180deg,#7c5cff,#6b4bf6); border:none}
+    button.confirm{display:inline-flex;align-items:center;gap:8px}
+    button.confirm:after{content:'Confirm';font-weight:700}
+    table{width:100%; border-collapse:collapse; font-size:.95rem}
+    th,td{padding:10px;border-bottom:1px dashed #263445}
+    tr:last-child td{border-bottom:none}
+    .right{text-align:right}
+    .progress{height:8px;background:#111827;border-radius:999px;overflow:hidden}
+    .progress>i{display:block;height:100%;background:linear-gradient(90deg,#7c5cff,#22c55e)}
+    footer{opacity:.8;text-align:center;padding:38px 0}
+    .hint{font-size:.9rem;color:#a3b1c2}
+    .warn{color:var(--warn)}
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="brand">💶 Paycheck Planner — Ireland</div>
+      <div class="spacer"></div>
+      <a class="jump" href="#wages">Wages</a>
+      <a class="jump" href="#pension">Pension</a>
+      <a class="jump" href="#taxes">Taxes</a>
+      <a class="jump" href="#expenses">Expenses</a>
+      <a class="jump" href="#savings">Savings</a>
+      <a class="jump" href="#summary">Summary</a>
+    </nav>
+    <div class="hero">
+      <div class="hero-inner">
+        <div>
+          <h1>Plan your Irish paycheck with clarity</h1>
+          <p>Wages → Pension → Taxes → Expenses → Savings. Confirm each step to lock it in and see a clean, Revolut-style breakdown.</p>
+        </div>
+        <div class="hero-graphics" aria-hidden="true">
+          <img class="i1" alt="Abstract finance card" src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?q=80&w=1080&auto=format&fit=crop"/>
+          <img class="i2" alt="Vibrant gradient" src="https://images.unsplash.com/photo-1602526432604-c1365d3852b0?q=80&w=1080&auto=format&fit=crop"/>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Overview KPIs -->
+    <div class="grid cols-2">
+      <section class="card">
+        <h2>Overview</h2>
+        <div class="section-hint">A snapshot of your plan. Values refresh when you hit <strong>Confirm</strong> in each section.</div>
+        <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap:12px">
+          <div class="kpi"><div>
+            <div class="muted">Gross Annual</div>
+            <strong class="mono" id="kpiGross">€0</strong>
+          </div><span class="badge">€ / yr</span></div>
+          <div class="kpi"><div>
+            <div class="muted">Taxes (PAYE+USC+PRSI)</div>
+            <strong class="mono" id="kpiTax">€0</strong>
+          </div><span class="badge">per yr</span></div>
+          <div class="kpi"><div>
+            <div class="muted">Net Take-home</div>
+            <strong class="mono" id="kpiNet">€0</strong>
+          </div><span class="badge">per yr</span></div>
+          <div class="kpi"><div>
+            <div class="muted">Savings Forecast</div>
+            <strong class="mono" id="kpiSavings">€0</strong>
+          </div><span class="badge" id="savingsHorizonLabel">5 yrs</span></div>
+        </div>
+      </section>
+
+      <section class="card" id="wages">
+        <h2>Wages</h2>
+        <div class="section-hint">Enter your pay the way your employer pays you, then <strong>Confirm</strong>. We convert across annual, monthly, fortnightly and weekly.
+          <div class="tips">
+            <div class="tip"><i>💡</i><span>Hourly? Set a realistic <em>hours/week</em> (Ireland typical full-time is 37.5–40).</span></div>
+            <div class="tip"><i>⚖️</i><span>Overtime/bonus? Add it in <em>Annual</em> to avoid understating taxes.</span></div>
+          </div>
+        </div>
+        <div class="row3">
+          <div>
+            <label for="payFrequency">Input Frequency</label>
+            <select id="payFrequency">
+              <option value="annual">Annual</option>
+              <option value="monthly">Monthly</option>
+              <option value="biweekly">Bi-weekly (26)</option>
+              <option value="weekly">Weekly (52)</option>
+              <option value="hourly">Hourly</option>
+            </select>
+          </div>
+          <div>
+            <label for="payInput">Amount</label>
+            <input id="payInput" type="number" min="0" step="0.01" placeholder="e.g. 45000" />
+          </div>
+          <div id="hourlyWrap" style="display:none">
+            <label for="hoursPerWeek">Hours / week</label>
+            <input id="hoursPerWeek" type="number" min="0" step="0.1" value="39" />
+          </div>
+        </div>
+        <div class="row4" style="margin-top:12px">
+          <div><div class="pill"><span>Annual</span><strong class="mono" id="annualOut">€0</strong></div></div>
+          <div><div class="pill"><span>Monthly</span><strong class="mono" id="monthlyOut">€0</strong></div></div>
+          <div><div class="pill"><span>Bi-weekly</span><strong class="mono" id="biweeklyOut">€0</strong></div></div>
+          <div><div class="pill"><span>Weekly</span><strong class="mono" id="weeklyOut">€0</strong></div></div>
+        </div>
+        <div class="actions" style="margin-top:12px">
+          <button class="primary confirm" id="confirmWages"></button>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:18px">
+      <section class="card" id="pension">
+        <h2>Pension Contributions</h2>
+        <div class="section-hint">Model your employee + employer match and compounding growth.
+          <div class="tips">
+            <div class="tip"><i>🎯</i><span>Try to capture the full employer match—it’s effectively a risk-free return.</span></div>
+            <div class="tip"><i>⏳</i><span>Small % early + time &gt; large % late. Nudge up 1% each year.</span></div>
+          </div>
+        </div>
+        <div class="row3">
+          <div>
+            <label for="eePension">Your contribution (% of gross)</label>
+            <input id="eePension" type="number" min="0" max="100" step="0.1" value="5" />
+          </div>
+          <div>
+            <label for="erMatch">Employer match (% of gross)</label>
+            <input id="erMatch" type="number" min="0" max="100" step="0.1" value="5" />
+          </div>
+          <div>
+            <label for="pensionReturn">Assumed annual return (%)</label>
+            <input id="pensionReturn" type="number" min="-10" max="20" step="0.1" value="5" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="pensionYears">Time horizon (years): <span id="pensionYearsLabel">5</span></label>
+            <input id="pensionYears" type="range" min="1" max="40" step="1" value="5" />
+          </div>
+          <div>
+            <div class="kpi"><div>
+              <div class="muted">Projected pot in <span id="pensionYearsBadge">5</span> yrs</div>
+              <strong class="mono" id="pensionPot">€0</strong>
+            </div><span class="badge">end value</span></div>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:12px">
+          <button class="primary confirm" id="confirmPension"></button>
+        </div>
+      </section>
+
+      <section class="card" id="taxes">
+        <h2>Taxes (PAYE, USC, PRSI)</h2>
+        <div class="section-hint">Irish 2025 rules with editable credits. Press <strong>Confirm</strong> to recompute.
+          <div class="tips">
+            <div class="tip"><i>🧾</i><span>Tax credits: Personal + Employee default to €4,000. Add others (e.g., rent credit) in the box.</span></div>
+            <div class="tip"><i>📈</i><span>Raises/bonus? Re-Confirm Wages then Taxes to see the new band mix.</span></div>
+          </div>
+        </div>
+        <div class="row3">
+          <div>
+            <label for="taxYear">Tax Year</label>
+            <select id="taxYear">
+              <option value="2025" selected>2025</option>
+            </select>
+          </div>
+          <div>
+            <label for="status">Status</label>
+            <select id="status">
+              <option value="single" selected>Single / Widowed (no children)</option>
+              <option value="married_one">Married / Civil (one income)</option>
+              <option value="married_two">Married / Civil (both incomes)</option>
+              <option value="single_parent">Single Parent</option>
+            </select>
+          </div>
+          <div>
+            <label for="taxCredits">Tax credits (€ per year)</label>
+            <input id="taxCredits" type="number" min="0" step="1" value="4000" />
+            <div class="hint">Defaults include Personal (€2,000) + Employee (€2,000).</div>
+          </div>
+        </div>
+        <div class="row3" style="margin-top:10px">
+          <div><div class="pill">PAYE: <strong class="mono" id="payeOut">€0</strong></div></div>
+          <div><div class="pill">USC: <strong class="mono" id="uscOut">€0</strong></div></div>
+          <div><div class="pill">PRSI (Class A): <strong class="mono" id="prsiOut">€0</strong></div></div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div>
+            <div class="progress"><i id="taxBar" style="width:0%"></i></div>
+            <div class="hint">Tax share of gross <span class="mono" id="taxShare">0%</span></div>
+          </div>
+          <div class="kpi"><div>
+            <div class="muted">Net after tax (annual)</div>
+            <strong class="mono" id="netAfterTax">€0</strong>
+          </div><span class="badge">take-home</span></div>
+        </div>
+        <div class="actions" style="margin-top:12px"><button class="primary confirm" id="confirmTaxes"></button></div>
+      </section>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:18px">
+      <section class="card" id="expenses">
+        <h2>Mandatory Expenses</h2>
+        <div class="section-hint">Add recurring costs and choose frequency. Press <strong>Confirm</strong> to update totals.
+          <div class="tips">
+            <div class="tip"><i>🏷️</i><span>Separate fixed (rent, insurance) and variable (food, fuel) to see where to trim.</span></div>
+            <div class="tip"><i>📆</i><span>Annual items (MOT, car tax) — add as <em>Annual</em> to avoid surprises.</span></div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" id="addExpense">+ Add expense</button>
+          <button id="clearExpenses">Clear</button>
+          <button class="confirm" id="confirmExpenses"></button>
+        </div>
+        <table id="expenseTable" style="margin-top:10px">
+          <thead>
+            <tr><th>Name</th><th>Amount</th><th>Frequency</th><th class="right">Annualised</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+          <tfoot>
+            <tr><td colspan="3" class="right">Total</td><td class="right mono" id="expenseTotal">€0</td><td></td></tr>
+          </tfoot>
+        </table>
+      </section>
+
+      <section class="card" id="savings">
+        <h2>Savings & Spending</h2>
+        <div class="section-hint">Choose a savings rate on your net; we’ll show suggested monthly saving and free-to-spend after expenses.
+          <div class="tips">
+            <div class="tip"><i>🛟</i><span>Aim for 3–6 months of expenses as an emergency buffer.</span></div>
+            <div class="tip"><i>📊</i><span>Automate: standing order the day after payday to hit your target.</span></div>
+          </div>
+        </div>
+        <div class="row3">
+          <div>
+            <label for="targetSavingsRate">Target savings rate (% of net)</label>
+            <input id="targetSavingsRate" type="number" min="0" max="100" step="0.5" value="20" />
+          </div>
+          <div>
+            <div class="kpi"><div>
+              <div class="muted">Suggested monthly savings</div>
+              <strong class="mono" id="suggestedSavings">€0</strong>
+            </div><span class="badge">guide</span></div>
+          </div>
+          <div>
+            <div class="kpi"><div>
+              <div class="muted">Free to spend (monthly)</div>
+              <strong class="mono" id="freeSpend">€0</strong>
+            </div><span class="badge">after expenses</span></div>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:12px"><button class="primary confirm" id="confirmSavings"></button></div>
+      </section>
+    </div>
+
+    <section class="card" id="summary" style="margin-top:18px">
+      <h2>Summary</h2>
+      <div class="section-hint">A consolidated picture after all <strong>Confirm</strong> actions.</div>
+      <div class="grid">
+        <div>
+          <table>
+            <tbody>
+              <tr><td>Gross annual</td><td class="right mono" id="sumGross">€0</td></tr>
+              <tr><td>PAYE</td><td class="right mono" id="sumPAYE">€0</td></tr>
+              <tr><td>USC</td><td class="right mono" id="sumUSC">€0</td></tr>
+              <tr><td>PRSI</td><td class="right mono" id="sumPRSI">€0</td></tr>
+              <tr><td><strong>Total tax</strong></td><td class="right mono" id="sumTax">€0</td></tr>
+              <tr><td>Net after tax</td><td class="right mono" id="sumNet">€0</td></tr>
+              <tr><td>Mandatory expenses</td><td class="right mono" id="sumExp">€0</td></tr>
+              <tr><td><strong>Net after expenses</strong></td><td class="right mono" id="sumAfterExp">€0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="progress"><i id="budgetBar" style="width:0%"></i></div>
+          <div class="hint">Expenses as share of net: <span class="mono" id="expShare">0%</span></div>
+          <div style="margin-top:12px" class="kpi"><div>
+            <div class="muted">Runway (months) at current free cashflow</div>
+            <strong class="mono" id="runway">—</strong>
+          </div><span class="badge">rule-of-thumb</span></div>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <button id="saveState">💾 Save</button>
+        <button id="resetState">↺ Reset</button>
+      </div>
+      <p class="hint">Your inputs are kept in your browser (local only). No data leaves this page.</p>
+    </section>
+
+    <footer>
+      Built for Irish rules (2025) — double-check official guidance for your circumstances.
+    </footer>
+  </main>
+
+  <script>
+    const € = n => n.toLocaleString(undefined,{style:'currency',currency:'EUR',maximumFractionDigits:0});
+    const pct = n => `${n.toFixed(1)}%`;
+
+    // ------------------ Tax parameters (2025) ------------------
+    const TAX_2025 = {
+      standardRate: 0.20,
+      higherRate: 0.40,
+      bands: { single: 44000, married_one: 53000, married_two: 88000, single_parent: 49000 },
+      defaultCredits: 4000,
+      usc: [ { upTo: 12012, rate: 0.005 }, { upTo: 27382, rate: 0.02 }, { upTo: 70044, rate: 0.03 }, { upTo: Infinity, rate: 0.08 } ],
+      prsi: { employeeRate_beforeOct: 0.041, employeeRate_afterOct: 0.042, weeklyNilBelow: 352, prsiCreditStart: 352.01, prsiCreditEnd: 424, prsiCreditMax: 12 }
+    };
+
+    // ------------------ State ------------------
+    const state = {
+      payFrequency: 'annual', payInput: 0, hoursPerWeek: 39,
+      eePension: 5, erMatch: 5, pensionReturn: 5, pensionYears: 5,
+      taxYear: '2025', status: 'single', taxCredits: 4000,
+      expenses: [], targetSavingsRate: 20
+    };
+
+    // ------------------ Elements ------------------
+    const el = id => document.getElementById(id);
+
+    // Wages
+    const payFrequency = el('payFrequency');
+    const payInput = el('payInput');
+    const hoursPerWeek = el('hoursPerWeek');
+
+    // Pension
+    const eePension = el('eePension');
+    const erMatch = el('erMatch');
+    const pensionReturn = el('pensionReturn');
+    const pensionYears = el('pensionYears');
+
+    // Taxes
+    const taxYear = el('taxYear');
+    const status = el('status');
+    const taxCredits = el('taxCredits');
+
+    // Savings
+    const targetSavingsRate = el('targetSavingsRate');
+
+    // Outputs
+    const out = {
+      annualOut: el('annualOut'), monthlyOut: el('monthlyOut'), weeklyOut: el('weeklyOut'), biweeklyOut: el('biweeklyOut'),
+      kpiGross: el('kpiGross'), kpiTax: el('kpiTax'), kpiNet: el('kpiNet'),
+      payeOut: el('payeOut'), uscOut: el('uscOut'), prsiOut: el('prsiOut'),
+      netAfterTax: el('netAfterTax'), taxBar: el('taxBar'), taxShare: el('taxShare'),
+      pensionYearsLabel: el('pensionYearsLabel'), pensionYearsBadge: el('pensionYearsBadge'), pensionPot: el('pensionPot'), savingsHorizonLabel: el('savingsHorizonLabel'),
+      suggestedSavings: el('suggestedSavings'), freeSpend: el('freeSpend'),
+      sumGross: el('sumGross'), sumPAYE: el('sumPAYE'), sumUSC: el('sumUSC'), sumPRSI: el('sumPRSI'), sumTax: el('sumTax'), sumNet: el('sumNet'), sumExp: el('sumExp'), sumAfterExp: el('sumAfterExp'),
+      budgetBar: el('budgetBar'), expShare: el('expShare'), runway: el('runway'), kpiSavings: el('kpiSavings')
+    };
+
+    // ------------------ Helpers ------------------
+    function grossAnnual(){
+      const amt = Number(payInput.value||0);
+      switch(payFrequency.value){
+        case 'annual': return amt;
+        case 'monthly': return amt*12;
+        case 'biweekly': return amt*26;
+        case 'weekly': return amt*52;
+        case 'hourly': return amt*Number(hoursPerWeek.value||0)*52;
+      }
+      return 0;
+    }
+
+    function calcPAYE(annual, config){
+      const band = config.bands[state.status] || config.bands.single;
+      const at20 = Math.min(annual, band);
+      const at40 = Math.max(0, annual - band);
+      let tax = at20*config.standardRate + at40*config.higherRate;
+      tax -= Number(state.taxCredits||0);
+      return Math.max(0, tax);
+    }
+
+    function calcUSC(annual, config){
+      let remaining = annual; let usc=0; let last=0;
+      for(const b of config.usc){
+        const cap = Math.min(remaining, b.upTo - last);
+        if(cap>0){ usc += cap * b.rate; remaining -= cap; last = b.upTo; }
+        if(remaining<=0) break;
+      }
+      if(annual < 13000) return 0;
+      return usc;
+    }
+
+    function weeklyPRSI(weekly, config, isAfterOct){
+      if(weekly <= config.weeklyNilBelow) return 0;
+      const rate = isAfterOct ? config.employeeRate_afterOct : config.employeeRate_beforeOct;
+      let charge = weekly * rate;
+      if(weekly > config.prsiCreditStart && weekly <= config.prsiCreditEnd){
+        const proportion = (config.prsiCreditEnd - weekly) / (config.prsiCreditEnd - config.prsiCreditStart);
+        const credit = Math.max(0, config.prsiCreditMax * proportion);
+        charge = Math.max(0, charge - credit);
+      }
+      return charge;
+    }
+
+    function calcPRSI(annual, config){
+      const weekly = annual/52;
+      const weeksBeforeOct = 39, weeksAfterOct = 13;
+      const part1 = weeklyPRSI(weekly, config, false) * weeksBeforeOct;
+      const part2 = weeklyPRSI(weekly, config, true) * weeksAfterOct;
+      return part1 + part2;
+    }
+
+    function compoundFutureValue(monthlyContribution, years, annualReturn){
+      const r = annualReturn/100/12; const n = years*12;
+      if(r === 0) return monthlyContribution*n;
+      return monthlyContribution * ((Math.pow(1+r,n)-1)/r);
+    }
+
+    function updateWages(){
+      const annual = grossAnnual();
+      out.annualOut.textContent = €(annual);
+      out.monthlyOut.textContent = €(annual/12);
+      out.biweeklyOut.textContent = €(annual/26);
+      out.weeklyOut.textContent = €(annual/52);
+      out.kpiGross.textContent = €(annual);
+      el('hourlyWrap').style.display = payFrequency.value==='hourly' ? '' : 'none';
+      return annual;
+    }
+
+    function updateTaxes(annual){
+      const cfg = TAX_2025;
+      state.taxCredits = Number(el('taxCredits').value||0);
+      const paye = calcPAYE(annual, cfg);
+      const usc = calcUSC(annual, cfg);
+      const prsi = calcPRSI(annual, cfg.prsi);
+      const totalTax = paye + usc + prsi;
+      const net = Math.max(0, annual - totalTax);
+
+      out.payeOut.textContent = €(paye);
+      out.uscOut.textContent = €(usc);
+      out.prsiOut.textContent = €(prsi);
+      out.kpiTax.textContent = €(totalTax);
+      out.netAfterTax.textContent = €(net);
+      out.kpiNet.textContent = €(net);
+
+      const share = annual>0 ? (totalTax/annual*100) : 0;
+      out.taxBar.style.width = Math.min(100, Math.max(0, share)).toFixed(1)+"%";
+      out.taxShare.textContent = pct(share);
+
+      out.sumGross.textContent = €(annual);
+      out.sumPAYE.textContent = €(paye);
+      out.sumUSC.textContent = €(usc);
+      out.sumPRSI.textContent = €(prsi);
+      out.sumTax.textContent = €(totalTax);
+      out.sumNet.textContent = €(net);
+
+      return { paye, usc, prsi, totalTax, net };
+    }
+
+    function updatePension(annual){
+      const ee = Number(eePension.value||0)/100 * annual;
+      const er = Number(erMatch.value||0)/100 * annual;
+      const monthly = (ee + er)/12;
+      const years = Number(pensionYears.value);
+      const fv = compoundFutureValue(monthly, years, Number(pensionReturn.value||0));
+      out.pensionYearsLabel.textContent = years;
+      out.pensionYearsBadge.textContent = years;
+      out.pensionPot.textContent = €(fv);
+      out.kpiSavings.textContent = €(fv);
+      out.savingsHorizonLabel.textContent = years + ' yrs';
+      return { eeAnnual: ee, erAnnual: er, projected: fv };
+    }
+
+    function expenseAnnualised(amount, freq){
+      const v = Number(amount||0);
+      if(freq==='weekly') return v*52;
+      if(freq==='monthly') return v*12;
+      return v; // annual
+    }
+
+    function renderExpenses(){
+      const tbody = document.querySelector('#expenseTable tbody');
+      tbody.innerHTML = '';
+      let total=0;
+      state.expenses.forEach((e, idx)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input data-idx="${idx}" data-k="name" value="${e.name}" /></td>
+          <td><input type="number" step="0.01" min="0" data-idx="${idx}" data-k="amount" value="${e.amount}" /></td>
+          <td>
+            <select data-idx="${idx}" data-k="freq">
+              <option value="weekly" ${e.freq==='weekly'?'selected':''}>Weekly</option>
+              <option value="monthly" ${e.freq==='monthly'?'selected':''}>Monthly</option>
+              <option value="annual" ${e.freq==='annual'?'selected':''}>Annual</option>
+            </select>
+          </td>
+          <td class="right mono">${€(expenseAnnualised(e.amount,e.freq))}</td>
+          <td class="right"><button data-idx="${idx}" class="remove">✕</button></td>`;
+        tbody.appendChild(tr);
+        total += expenseAnnualised(e.amount,e.freq);
+      });
+      out.expenseTotal.textContent = €(total);
+      return total;
+    }
+
+    function updateSavingsAndSummary(net, expensesAnnual){
+      const netMonthly = net/12;
+      const expMonthly = expensesAnnual/12;
+      const target = Number(targetSavingsRate.value||0)/100 * netMonthly;
+      const free = Math.max(0, netMonthly - expMonthly - target);
+      out.suggestedSavings.textContent = €(target);
+      out.freeSpend.textContent = €(free);
+
+      out.sumExp.textContent = €(expensesAnnual);
+      out.sumAfterExp.textContent = €(Math.max(0, net - expensesAnnual));
+
+      const share = net>0 ? (expensesAnnual/net*100) : 0;
+      out.budgetBar.style.width = Math.min(100, Math.max(0, share)).toFixed(1)+"%";
+      out.expShare.textContent = pct(share);
+
+      const freeAnnual = Math.max(0, net - expensesAnnual);
+      const months = expMonthly>0 ? (freeAnnual/expMonthly) : 0;
+      out.runway.textContent = months ? months.toFixed(1) + ' mo' : '—';
+    }
+
+    function syncUItoState(){
+      state.payFrequency = payFrequency.value;
+      state.payInput = Number(payInput.value||0);
+      state.hoursPerWeek = Number(hoursPerWeek.value||0);
+      state.eePension = Number(eePension.value||0);
+      state.erMatch = Number(erMatch.value||0);
+      state.pensionReturn = Number(pensionReturn.value||0);
+      state.pensionYears = Number(pensionYears.value||0);
+      state.taxYear = taxYear.value; state.status = status.value; state.taxCredits = Number(taxCredits.value||0);
+      state.targetSavingsRate = Number(targetSavingsRate.value||0);
+    }
+
+    function recalc(){
+      syncUItoState();
+      const annual = updateWages();
+      const taxes = updateTaxes(annual);
+      updatePension(annual);
+      const expensesAnnual = renderExpenses();
+      updateSavingsAndSummary(taxes.net, expensesAnnual);
+    }
+
+    // -------- Confirm-driven workflow (no auto-calc) --------
+    document.getElementById('confirmWages').addEventListener('click', ()=>{recalc();});
+    document.getElementById('confirmPension').addEventListener('click', ()=>{recalc();});
+    document.getElementById('confirmTaxes').addEventListener('click', ()=>{recalc();});
+    document.getElementById('confirmExpenses').addEventListener('click', ()=>{recalc();});
+    document.getElementById('confirmSavings').addEventListener('click', ()=>{recalc();});
+
+    // Context controls
+    payFrequency.addEventListener('change', ()=>{ el('hourlyWrap').style.display = payFrequency.value==='hourly' ? '' : 'none'; });
+
+    // Expense table events (edit locally; apply on Confirm)
+    document.getElementById('addExpense').addEventListener('click', ()=>{ state.expenses.push({name:'', amount:0, freq:'monthly'}); renderExpenses(); });
+    document.getElementById('clearExpenses').addEventListener('click', ()=>{ state.expenses = []; renderExpenses(); });
+    document.querySelector('#expenseTable').addEventListener('input', (e)=>{
+      const idx = e.target.getAttribute('data-idx');
+      const k = e.target.getAttribute('data-k');
+      if(idx!==null){ state.expenses[idx][k] = k==='amount' ? Number(e.target.value||0) : e.target.value; renderExpenses(); }
+    });
+    document.querySelector('#expenseTable').addEventListener('click', (e)=>{
+      if(e.target.classList.contains('remove')){ const idx = e.target.getAttribute('data-idx'); state.expenses.splice(idx,1); renderExpenses(); }
+    });
+
+    // Save / Load
+    document.getElementById('saveState').addEventListener('click', ()=>{ localStorage.setItem('ie-paycheck-planner', JSON.stringify(state)); alert('Saved locally.'); });
+    document.getElementById('resetState').addEventListener('click', ()=>{ localStorage.removeItem('ie-paycheck-planner'); location.reload(); });
+
+    (function init(){
+      const saved = localStorage.getItem('ie-paycheck-planner');
+      if(saved){ try{ Object.assign(state, JSON.parse(saved)); }catch{} }
+      payFrequency.value = state.payFrequency; payInput.value = state.payInput; hoursPerWeek.value = state.hoursPerWeek;
+      eePension.value = state.eePension; erMatch.value = state.erMatch; pensionReturn.value = state.pensionReturn; pensionYears.value = state.pensionYears;
+      taxYear.value = state.taxYear; status.value = state.status; taxCredits.value = state.taxCredits;
+      targetSavingsRate.value = state.targetSavingsRate;
+      if(state.expenses.length===0){ state.expenses = [ {name:'Rent', amount:0, freq:'monthly'}, {name:'Utilities', amount:0, freq:'monthly'}, {name:'Transport', amount:0, freq:'monthly'} ]; }
+      // First render, then require explicit Confirms for updates
+      renderExpenses();
+      recalc();
+    })();
+  </script>
+</body>
+</html>
