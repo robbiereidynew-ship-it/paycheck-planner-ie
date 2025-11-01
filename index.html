@@ -36,7 +36,7 @@
     .grid{display:grid; gap:18px}
     @media(min-width:980px){.grid.cols-2{grid-template-columns:1.1fr .9fr}}
 
-    section.card{background:linear-gradient(180deg,#101722,#0f141b); border:1px solid #1f2937; border-radius:22px; padding:20px; box-shadow:0 10px 34px #00000033; min-height:50vh; scroll-margin-top:80px}
+    section.card{background:linear-gradient(180deg,#101722,#0f141b); border:1px solid #1f2937; border-radius:22px; padding:20px; box-shadow:0 10px 34px #00000033; height:600px; overflow:auto; scroll-margin-top:80px}
     h2{margin:4px 0 14px; font-size:1.3rem}
     .section-hint{margin:-6px 0 14px; color:#9fb0c5; font-size:.92rem}
     .tips{display:grid;gap:8px;margin-top:10px}
@@ -88,7 +88,7 @@
       <div class="hero-inner">
         <div>
           <h1>Plan your Irish paycheck with clarity</h1>
-          <p>Wages → Pension → Taxes → Expenses → Savings. Confirm each step to lock it in and see a clean, Revolut-style breakdown.</p>
+          <p>Wages → Pension → Taxes → Expenses → Savings. Confirm each step to lock it in and see a clean, Revolut‑style breakdown.</p>
         </div>
         <div class="hero-graphics" aria-hidden="true">
           <img class="i1" alt="Abstract finance card" src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?q=80&w=1080&auto=format&fit=crop"/>
@@ -114,7 +114,7 @@
             <strong class="mono" id="kpiTax">€0</strong>
           </div><span class="badge">per yr</span></div>
           <div class="kpi"><div>
-            <div class="muted">Net Take-home</div>
+            <div class="muted">Net Take‑home</div>
             <strong class="mono" id="kpiNet">€0</strong>
           </div><span class="badge">per yr</span></div>
           <div class="kpi"><div>
@@ -128,7 +128,7 @@
         <h2>Wages</h2>
         <div class="section-hint">Enter your pay the way your employer pays you, then <strong>Confirm</strong>. We convert across annual, monthly, fortnightly and weekly.
           <div class="tips">
-            <div class="tip"><i>💡</i><span>Hourly? Set a realistic <em>hours/week</em> (Ireland typical full-time is 37.5–40).</span></div>
+            <div class="tip"><i>💡</i><span>Hourly? Set a realistic <em>hours/week</em> (Ireland typical full‑time is 37.5–40).</span></div>
             <div class="tip"><i>⚖️</i><span>Overtime/bonus? Add it in <em>Annual</em> to avoid understating taxes.</span></div>
           </div>
         </div>
@@ -138,7 +138,7 @@
             <select id="payFrequency">
               <option value="annual">Annual</option>
               <option value="monthly">Monthly</option>
-              <option value="biweekly">Bi-weekly (26)</option>
+              <option value="biweekly">Bi‑weekly (26)</option>
               <option value="weekly">Weekly (52)</option>
               <option value="hourly">Hourly</option>
             </select>
@@ -155,7 +155,7 @@
         <div class="row4" style="margin-top:12px">
           <div><div class="pill"><span>Annual</span><strong class="mono" id="annualOut">€0</strong></div></div>
           <div><div class="pill"><span>Monthly</span><strong class="mono" id="monthlyOut">€0</strong></div></div>
-          <div><div class="pill"><span>Bi-weekly</span><strong class="mono" id="biweeklyOut">€0</strong></div></div>
+          <div><div class="pill"><span>Bi‑weekly</span><strong class="mono" id="biweeklyOut">€0</strong></div></div>
           <div><div class="pill"><span>Weekly</span><strong class="mono" id="weeklyOut">€0</strong></div></div>
         </div>
         <div class="actions" style="margin-top:12px">
@@ -169,7 +169,7 @@
         <h2>Pension Contributions</h2>
         <div class="section-hint">Model your employee + employer match and compounding growth.
           <div class="tips">
-            <div class="tip"><i>🎯</i><span>Try to capture the full employer match—it’s effectively a risk-free return.</span></div>
+            <div class="tip"><i>🎯</i><span>Try to capture the full employer match—it’s effectively a risk‑free return.</span></div>
             <div class="tip"><i>⏳</i><span>Small % early + time &gt; large % late. Nudge up 1% each year.</span></div>
           </div>
         </div>
@@ -209,7 +209,7 @@
         <div class="section-hint">Irish 2025 rules with editable credits. Press <strong>Confirm</strong> to recompute.
           <div class="tips">
             <div class="tip"><i>🧾</i><span>Tax credits: Personal + Employee default to €4,000. Add others (e.g., rent credit) in the box.</span></div>
-            <div class="tip"><i>📈</i><span>Raises/bonus? Re-Confirm Wages then Taxes to see the new band mix.</span></div>
+            <div class="tip"><i>📈</i><span>Raises/bonus? Re‑Confirm Wages then Taxes to see the new band mix.</span></div>
           </div>
         </div>
         <div class="row3">
@@ -247,7 +247,7 @@
           <div class="kpi"><div>
             <div class="muted">Net after tax (annual)</div>
             <strong class="mono" id="netAfterTax">€0</strong>
-          </div><span class="badge">take-home</span></div>
+          </div><span class="badge">take‑home</span></div>
         </div>
         <div class="actions" style="margin-top:12px"><button class="primary confirm" id="confirmTaxes"></button></div>
       </section>
@@ -280,7 +280,7 @@
 
       <section class="card" id="savings">
         <h2>Savings & Spending</h2>
-        <div class="section-hint">Choose a savings rate on your net; we’ll show suggested monthly saving and free-to-spend after expenses.
+        <div class="section-hint">Choose a savings rate on your net; we’ll show suggested monthly saving and free‑to‑spend after expenses.
           <div class="tips">
             <div class="tip"><i>🛟</i><span>Aim for 3–6 months of expenses as an emergency buffer.</span></div>
             <div class="tip"><i>📊</i><span>Automate: standing order the day after payday to hit your target.</span></div>
@@ -332,7 +332,7 @@
           <div style="margin-top:12px" class="kpi"><div>
             <div class="muted">Runway (months) at current free cashflow</div>
             <strong class="mono" id="runway">—</strong>
-          </div><span class="badge">rule-of-thumb</span></div>
+          </div><span class="badge">rule‑of‑thumb</span></div>
         </div>
       </div>
       <div class="actions" style="margin-top:12px">
@@ -343,7 +343,7 @@
     </section>
 
     <footer>
-      Built for Irish rules (2025) — double-check official guidance for your circumstances.
+      Built for Irish rules (2025) — double‑check official guidance for your circumstances.
     </footer>
   </main>
 
@@ -631,3 +631,4 @@
   </script>
 </body>
 </html>
+
