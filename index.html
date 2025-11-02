@@ -11,7 +11,6 @@
     body{margin:0;font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; color:var(--ink); background:radial-gradient(1200px 900px at 85% -20%, #1a2230 15%, transparent 60%) var(--bg)}
     a{color:var(--accent);text-decoration:none}
 
-    /* Header */
     header{position:sticky;top:0;z-index:50;background:#0b0f1490;backdrop-filter:blur(8px) saturate(160%);border-bottom:1px solid #141d2a}
     .nav{max-width:1200px;margin:auto;display:flex;gap:16px;align-items:center;padding:10px 16px}
     .brand{display:flex;align-items:center;gap:10px;font-weight:800}
@@ -20,7 +19,6 @@
     .nav a{color:#cbd5e1;padding:8px 10px;border-radius:10px}
     .nav a:hover{background:#0e1622}
 
-    /* Full-page sections */
     main{max-width:1100px;margin:0 auto}
     section.page{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:32px 16px;scroll-margin-top:76px}
     .card{background:linear-gradient(180deg,#101722,#0f141b);border:1px solid var(--line);border-radius:18px;padding:18px}
@@ -66,6 +64,14 @@
       <a href="#overview">Overview</a>
     </div>
   </header>
+
+  <!-- Simple intro banner -->
+  <section class="page" style="min-height:auto;padding-top:18px;padding-bottom:12px">
+    <div class="card" style="max-width:1100px;margin:0 auto">
+      <h2 style="margin-bottom:6px">What this site does</h2>
+      <p class="hint" style="margin:0">Step through your Irish money flow: <strong>Salary → Pension → Tax → Expenses → Savings → Spending → Overview</strong>. Each section is a full page. Click <em>Calculate/Update</em> on each to refresh the numbers used later.</p>
+    </div>
+  </section>
 
   <main>
     <!-- SALARY PAGE -->
@@ -161,7 +167,7 @@
       <div class="split">
         <div>
           <h1>Tax (Ireland 2025)</h1>
-          <p class="hint">PAYE + USC + PRSI (employee Class A). Enter status & credits, then Calculate.</p>
+          <p class="hint">PAYE + USC + PRSI (employee Class A). Uses your <strong>Salary</strong> from page 1. Enter status & credits (add rent credit and eligible medical), then Calculate.</p>
           <div class="card">
             <div class="row3">
               <div><label for="status">Status</label>
@@ -172,8 +178,13 @@
                   <option value="single_parent">Single parent</option>
                 </select>
               </div>
-              <div><label for="credits">Tax credits €/yr</label><input id="credits" type="number" min="0" step="1" value="4000"></div>
+              <div><label for="credits">Base tax credits €/yr</label><input id="credits" type="number" min="0" step="1" value="4000"></div>
+              <div><label for="rentCredit">Rent tax credit €/yr</label><input id="rentCredit" type="number" min="0" step="1" value="0"></div>
+            </div>
+            <div class="row3 mt12">
+              <div><label for="medicalEligible">Medical expenses eligible (€)</label><input id="medicalEligible" type="number" min="0" step="1" value="0"></div>
               <div><label>&nbsp;</label><button id="calcTax" class="primary" type="button">Calculate</button></div>
+              <div><label>&nbsp;</label><div class="kpi"><span>Using gross</span><strong class="mono" id="taxUsingGross">€0</strong></div></div>
             </div>
             <div class="kpis">
               <div class="kpi"><span>PAYE</span><strong class="mono" id="outPAYE">€0</strong></div>
@@ -206,7 +217,10 @@
             <table class="mt12" id="expTable">
               <thead><tr><th>Name</th><th>Amount</th><th>Freq</th><th class="right">Annualised</th><th></th></tr></thead>
               <tbody></tbody>
-              <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="expTotal" class="mono">€0</td><td></td></tr></tfoot>
+              <tfoot>
+                <tr><td colspan="3" style="text-align:right">Total (annual)</td><td id="expTotal" class="mono">€0</td><td></td></tr>
+                <tr><td colspan="3" style="text-align:right">Total (monthly)</td><td id="expTotalMonthly" class="mono">€0</td><td></td></tr>
+              </tfoot>
             </table>
           </div>
         </div>
@@ -339,17 +353,22 @@
 
       // ------- Tax (Ireland 2025) -------
       const TAX = { standard:0.20, higher:0.40, bands:{single:44000,married_one:53000,married_two:88000,single_parent:49000}, usc:[{upTo:12012,rate:0.005},{upTo:27382,rate:0.02},{upTo:70044,rate:0.03},{upTo:Infinity,rate:0.08}], prsi:{weeklyNil:352, creditStart:352.01, creditEnd:424, creditMax:12, rate1:0.041, rate2:0.042, weeks1:39, weeks2:13} };
-      function calcPAYE(annual){ const band=TAX.bands[document.getElementById('status').value]||TAX.bands.single; const at20=Math.min(annual,band); const at40=Math.max(0,annual-band); let t=at20*TAX.standard+at40*TAX.higher; t -= Number(document.getElementById('credits').value||0); return Math.max(0,t); }
+      function calcPAYE(annual, totalCredits){ const band=TAX.bands[document.getElementById('status').value]||TAX.bands.single; const at20=Math.min(annual,band); const at40=Math.max(0,annual-band); let t=at20*TAX.standard+at40*TAX.higher; t -= Number(totalCredits||0); return Math.max(0,t); }
       function calcUSC(annual){ if(annual<13000) return 0; let rem=annual, last=0, u=0; for(const b of TAX.usc){ const cap=Math.min(rem,b.upTo-last); if(cap>0){u+=cap*b.rate; rem-=cap; last=b.upTo;} if(rem<=0) break;} return u; }
       function weeklyPRSI(weekly,isAfter){ if(weekly<=TAX.prsi.weeklyNil) return 0; const rate=isAfter?TAX.prsi.rate2:TAX.prsi.rate1; let ch=weekly*rate; if(weekly>TAX.prsi.creditStart && weekly<=TAX.prsi.creditEnd){ const p=(TAX.prsi.creditEnd-weekly)/(TAX.prsi.creditEnd-TAX.prsi.creditStart); ch=Math.max(0, ch - TAX.prsi.creditMax*p);} return ch; }
       function calcPRSI(annual){ const w=annual/52; return weeklyPRSI(w,false)*TAX.prsi.weeks1 + weeklyPRSI(w,true)*TAX.prsi.weeks2; }
       document.getElementById('calcTax').addEventListener('click', ()=>{
-        const a = state.annualGross || 0; const paye=calcPAYE(a); const usc=calcUSC(a); const prsi=calcPRSI(a); const total=paye+usc+prsi; const net=Math.max(0,a-total);
+        const a = state.annualGross || 0; document.getElementById('taxUsingGross').textContent = fmt(a);
+        const baseCredits = Number(document.getElementById('credits').value||0);
+        const rentCredit = Number(document.getElementById('rentCredit').value||0); // user-entered rent credit amount
+        const medicalEligible = Number(document.getElementById('medicalEligible').value||0);
+        const medicalRelief = medicalEligible * 0.20; // 20% relief approximation
+        const totalCredits = baseCredits + rentCredit + medicalRelief;
+        const paye=calcPAYE(a, totalCredits); const usc=calcUSC(a); const prsi=calcPRSI(a); const total=paye+usc+prsi; const net=Math.max(0,a-total);
         state.totalTax = total; state.netAnnual = net;
         document.getElementById('outPAYE').textContent=fmt(paye); document.getElementById('outUSC').textContent=fmt(usc); document.getElementById('outPRSI').textContent=fmt(prsi); document.getElementById('outTax').textContent=fmt(total);
         document.getElementById('netAnnual').textContent=fmt(net); document.getElementById('netMonthly').textContent=fmt(net/12);
-        // update spending snapshot if available
-        syncSpending();
+        syncSpending(); syncOverview();
       });
 
       // ------- Expenses -------
@@ -361,17 +380,16 @@
         <td><select data-i="${i}" data-k="freq"><option value="monthly" ${e.freq==='monthly'?'selected':''}>Monthly</option><option value="weekly" ${e.freq==='weekly'?'selected':''}>Weekly</option><option value="annual" ${e.freq==='annual'?'selected':''}>Annual</option></select></td>
         <td class="mono">${fmt(expAnnual(e.amount,e.freq))}</td>
         <td><button class="ghost" data-remove="${i}">✕</button></td>`; tbody.appendChild(tr); total+=expAnnual(e.amount,e.freq); });
-        document.getElementById('expTotal').textContent=fmt(total); return total; }
+        document.getElementById('expTotal').textContent=fmt(total); document.getElementById('expTotalMonthly').textContent=fmt(total/12); return total; }
       document.getElementById('addExp').addEventListener('click',()=>{ expenses.push({name:'',amount:0,freq:'monthly'}); renderExp(); });
       document.getElementById('clearExp').addEventListener('click',()=>{ expenses.length=0; renderExp(); });
       tbody.addEventListener('input',e=>{ const i=e.target.getAttribute('data-i'); const k=e.target.getAttribute('data-k'); if(i!==null){ expenses[i][k]= k==='amount'? Number(e.target.value||0): e.target.value; }});
       tbody.addEventListener('click',e=>{ const i=e.target.getAttribute('data-remove'); if(i!==null){ expenses.splice(i,1); renderExp(); }});
-      document.getElementById('calcExp').addEventListener('click',()=>{ state.expensesAnnual = renderExp(); syncSpending(); });
-      // initial rows
+      document.getElementById('calcExp').addEventListener('click',()=>{ state.expensesAnnual = renderExp(); syncSpending(); syncOverview(); });
       expenses.push({name:'Rent',amount:0,freq:'monthly'},{name:'Utilities',amount:0,freq:'monthly'},{name:'Transport',amount:0,freq:'monthly'}); renderExp();
 
       // ------- Savings -------
-      document.getElementById('calcSave').addEventListener('click',()=>{ const rate=Number(document.getElementById('saveRate').value||0)/100; state.saveRate=rate; const mo=(state.netAnnual/12)*rate; document.getElementById('saveMonthly').textContent=fmt(mo); document.getElementById('saveAnnual').textContent=fmt(mo*12); syncSpending(); });
+      document.getElementById('calcSave').addEventListener('click',()=>{ const rate=Number(document.getElementById('saveRate').value||0)/100; state.saveRate=rate; const mo=(state.netAnnual/12)*rate; document.getElementById('saveMonthly').textContent=fmt(mo); document.getElementById('saveAnnual').textContent=fmt(mo*12); syncSpending(); syncOverview(); });
 
       // ------- Spending snapshot -------
       function syncSpending(){ const netMo = state.netAnnual/12; const expMo = (state.expensesAnnual||0)/12; const saveMo = netMo*(state.saveRate||0); const freeMo = Math.max(0, netMo - expMo - saveMo); document.getElementById('spNetMonthly').textContent=fmt(netMo); document.getElementById('spExpMonthly').textContent=fmt(expMo); document.getElementById('spFreeMonthly').textContent=fmt(freeMo); }
@@ -380,7 +398,6 @@
       function syncOverview(){ const netMo=state.netAnnual/12; const expMo=(state.expensesAnnual||0)/12; const saveMo=netMo*(state.saveRate||0); const freeYr=Math.max(0, state.netAnnual - (state.expensesAnnual||0)); const runway = expMo>0 ? (freeYr/expMo) : 0; document.getElementById('ovGross').textContent=fmt(state.annualGross); document.getElementById('ovTax').textContent=fmt(state.totalTax); document.getElementById('ovNet').textContent=fmt(state.netAnnual); document.getElementById('ovExp').textContent=fmt(state.expensesAnnual||0); document.getElementById('ovFree').textContent=fmt(freeYr); document.getElementById('ovSaveMo').textContent=fmt(saveMo); document.getElementById('ovRunway').textContent= runway? runway.toFixed(1): '—'; }
       ['calcSalary','calcTax','calcExp','calcSave'].forEach(id=>{ document.getElementById(id).addEventListener('click', syncOverview); });
 
-      // goal calc
       function addMonths(d, m){ const dt=new Date(d.getTime()); dt.setMonth(dt.getMonth()+m); return dt; }
       document.getElementById('calcGoal').addEventListener('click',()=>{ const goal=Number(document.getElementById('goalAmount').value||0); const cur=Number(document.getElementById('goalCurrent').value||0); const mo=Number(document.getElementById('goalMonthly').value||0); if(mo<=0 || goal<=cur){ document.getElementById('goalMonths').textContent='—'; document.getElementById('goalDate').textContent='—'; return; } const months=Math.ceil((goal-cur)/mo); const target=addMonths(new Date(), months); document.getElementById('goalMonths').textContent=months; document.getElementById('goalDate').textContent=target.toLocaleDateString(); });
 
