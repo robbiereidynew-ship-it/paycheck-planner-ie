@@ -100,6 +100,7 @@
     <section id="calc" class="card">
       <h2>Salary calculator</h2>
       <p class="hint">Pick your input frequency, type the amount, then hit <strong>Calculate</strong>. If you choose Hourly, set hours per week too.</p>
+      <p class="hint" id="debugStatus" style="display:none"></p>
 
       <div class="row">
         <div>
@@ -161,53 +162,72 @@
   </main>
 
   <script>
-    const € = n => n.toLocaleString(undefined,{style:'currency',currency:'EUR',maximumFractionDigits:0});
+    // Robust version: waits for DOM, avoids exotic identifiers, adds visible debug
+    document.addEventListener('DOMContentLoaded', function(){
+      const debug = document.getElementById('debugStatus');
+      function showDebug(msg, ok=true){ if(!debug) return; debug.style.display='block'; debug.style.color = ok ? '#9fe6b8' : '#fca5a5'; debug.textContent = msg; }
 
-    // Show hours when hourly is selected
-    const freqEl = document.getElementById('freq');
-    const amountEl = document.getElementById('amount');
-    const hoursRow = document.getElementById('hoursRow');
-    const hoursEl = document.getElementById('hours');
-    freqEl.addEventListener('change', ()=>{
-      hoursRow.style.display = freqEl.value==='hourly' ? '' : 'none';
-    });
+      // Safer currency formatter (no unicode identifier)
+      function formatEUR(n){ return Number(n||0).toLocaleString(undefined,{style:'currency',currency:'EUR',maximumFractionDigits:0}); }
 
-    // Presets for quick testing
-    document.querySelectorAll('[data-preset]').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        freqEl.value='annual';
-        amountEl.value=btn.getAttribute('data-preset');
-        hoursRow.style.display='none';
-      });
-    });
-    document.getElementById('presetFT').addEventListener('click',()=>{hoursEl.value=39;});
+      // Grab elements and guard
+      const freqEl = document.getElementById('freq');
+      const amountEl = document.getElementById('amount');
+      const hoursRow = document.getElementById('hoursRow');
+      const hoursEl = document.getElementById('hours');
+      const calcBtn = document.getElementById('calcBtn');
+      const outAnnual = document.getElementById('outAnnual');
+      const outMonthly = document.getElementById('outMonthly');
+      const outBiweekly = document.getElementById('outBiweekly');
+      const outWeekly = document.getElementById('outWeekly');
 
-    // ---- SALARY CALC LOGIC ----
-    function toAnnual(freq, amount, hours){
-      const v = Number(amount||0);
-      switch(freq){
-        case 'annual': return v;
-        case 'monthly': return v*12;
-        case 'biweekly': return v*26;
-        case 'weekly': return v*52;
-        case 'hourly': return v*Number(hours||0)*52; // hours per week
-        default: return 0;
+      if(!freqEl || !amountEl || !hoursRow || !hoursEl || !calcBtn || !outAnnual){
+        showDebug('Script loaded but some elements were not found. Did Google Sites strip IDs or are you embedding only a fragment?', false);
+        return;
       }
-    }
-    function fillOutputs(annual){
-      document.getElementById('outAnnual').textContent = €(annual);
-      document.getElementById('outMonthly').textContent = €(annual/12);
-      document.getElementById('outBiweekly').textContent = €(annual/26);
-      document.getElementById('outWeekly').textContent = €(annual/52);
-    }
 
-    document.getElementById('calcBtn').addEventListener('click', ()=>{
-      const annual = toAnnual(freqEl.value, amountEl.value, hoursEl.value);
-      fillOutputs(annual);
+      // Toggle hours row
+      freqEl.addEventListener('change', ()=>{ hoursRow.style.display = freqEl.value==='hourly' ? '' : 'none'; });
+
+      // Presets
+      document.querySelectorAll('[data-preset]').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          freqEl.value='annual';
+          amountEl.value=btn.getAttribute('data-preset');
+          hoursRow.style.display='none';
+        });
+      });
+      const presetFT = document.getElementById('presetFT');
+      if(presetFT){ presetFT.addEventListener('click',()=>{hoursEl.value=39;}); }
+
+      // Core calc
+      function toAnnual(freq, amount, hours){
+        const v = Number(amount||0);
+        switch(freq){
+          case 'annual': return v;
+          case 'monthly': return v*12;
+          case 'biweekly': return v*26;
+          case 'weekly': return v*52;
+          case 'hourly': return v*Number(hours||0)*52; // hours per week
+          default: return 0;
+        }
+      }
+      function fillOutputs(annual){
+        outAnnual.textContent = formatEUR(annual);
+        outMonthly.textContent = formatEUR(annual/12);
+        outBiweekly.textContent = formatEUR(annual/26);
+        outWeekly.textContent = formatEUR(annual/52);
+      }
+
+      calcBtn.addEventListener('click', ()=>{
+        const annual = toAnnual(freqEl.value, amountEl.value, hoursEl.value);
+        fillOutputs(annual);
+        showDebug('Calculated ✔');
+      });
+      amountEl.addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ calcBtn.click(); }});
+
+      showDebug('Calculator ready');
     });
-
-    // Optional: calculate on Enter key within amount field
-    amountEl.addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ document.getElementById('calcBtn').click(); }});
   </script>
 </body>
 </html>
