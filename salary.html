@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Salary Calculator — Ireland (Starter)</title>
+  <style>
+    :root{--bg:#0b0f14;--ink:#e6edf3;--muted:#9fb0c5;--card:#101722;--line:#223044;--accent:#7c5cff;--accent2:#22c55e}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; color:var(--ink); background:radial-gradient(1000px 600px at 90% -10%, #1a2230 20%, transparent 60%) var(--bg)}
+    a{color:var(--accent)}
+
+    /* Header with extra flair */
+    header{position:sticky;top:0;z-index:50;background:#0b0f1490;backdrop-filter:blur(8px) saturate(160%);border-bottom:1px solid #141d2a}
+    .nav{max-width:1100px;margin:auto;display:flex;gap:16px;align-items:center;padding:10px 16px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .brand svg{filter:drop-shadow(0 6px 18px #0006)}
+    .spacer{flex:1}
+    .nav a{color:#cbd5e1;text-decoration:none;padding:8px 10px;border-radius:10px}
+    .nav a:hover{background:#0e1622}
+
+    .hero{border-bottom:1px solid #141d2a;background:conic-gradient(from 210deg at 80% -40%, #23185a 0deg, #121a2b 90deg, #0f1420 180deg, #23185a 360deg)}
+    .hero-inner{max-width:1100px;margin:0 auto;padding:28px 16px 36px;display:grid;grid-template-columns:1.2fr .8fr;gap:16px;align-items:center}
+    .hero h1{margin:0 0 6px;font-size:2rem}
+    .hero p{margin:0;color:var(--muted)}
+    .flare{position:relative;height:170px}
+    .flare .card{position:absolute;inset:auto;border:1px solid #293448;background:#0f172a;border-radius:18px;box-shadow:0 10px 36px #0006;padding:10px}
+    .flare .c1{right:0;top:-6px;transform:rotate(-2deg)}
+    .flare .c2{left:6%;bottom:-18px;transform:rotate(3deg)}
+
+    main{max-width:1100px;margin:24px auto 64px;padding:0 16px}
+    .card{background:linear-gradient(180deg,#101722,#0f141b);border:1px solid var(--line);border-radius:18px;padding:18px}
+    h2{margin:4px 0 10px;font-size:1.2rem}
+    .hint{color:var(--muted);font-size:.92rem;margin-bottom:8px}
+
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    label{display:block;font-size:.9rem;color:#a7b4c7;margin:6px 0}
+    input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid #213144;background:#0c1219;color:var(--ink)}
+    input:focus,select:focus{outline:none;box-shadow:0 0 0 2px var(--accent)}
+    button{cursor:pointer}
+    .primary{background:linear-gradient(180deg,var(--accent),#6a4bf6);border:none}
+    .ghost{background:#0f172a}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+    .kpi{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#0c1219;border:1px solid var(--line);border-radius:12px}
+    .mono{font-variant-numeric:tabular-nums}
+
+    .footer{opacity:.8;text-align:center;margin-top:28px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs>
+          <rect x="6" y="6" width="36" height="36" rx="10" fill="url(#g)"/></svg>
+        <span>Salary Calculator — Ireland</span>
+      </div>
+      <div class="spacer"></div>
+      <a href="#calc">Calculator</a>
+      <a href="#howto">How to add this</a>
+    </div>
+    <div class="hero">
+      <div class="hero-inner">
+        <div>
+          <h1>Crystal‑clear salary breakdowns</h1>
+          <p>Enter your pay once. Get instant Annual • Monthly • Bi‑weekly • Weekly amounts. Click Calculate to lock it in.</p>
+        </div>
+        <div class="flare" aria-hidden="true">
+          <div class="card c1">
+            <svg width="250" height="150" viewBox="0 0 250 150" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="8" rx="14" ry="14" width="234" height="134" fill="#0e1726" stroke="#2a3650"/>
+              <rect x="8" y="48" width="234" height="16" fill="#7c5cff" opacity="0.6"/>
+              <rect x="24" y="88" width="80" height="14" rx="7" fill="#101b2b" stroke="#2a3650"/>
+              <circle cx="188" cy="96" r="12" fill="#22c55e"/>
+              <circle cx="208" cy="96" r="12" fill="#7c5cff" opacity="0.9"/>
+            </svg>
+          </div>
+          <div class="card c2">
+            <svg width="230" height="160" viewBox="0 0 230 160" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="8" rx="14" ry="14" width="214" height="144" fill="#0e1726" stroke="#2a3650"/>
+              <g transform="translate(22,24)">
+                <rect x="0" y="66" width="20" height="46" fill="#384a6a"/>
+                <rect x="28" y="52" width="20" height="60" fill="#4c5f82"/>
+                <rect x="56" y="34" width="20" height="78" fill="#6b7ba1"/>
+                <rect x="84" y="16" width="20" height="96" fill="#7c8db4"/>
+                <polyline fill="none" stroke="#7c5cff" stroke-width="3" points="0,72 38,58 74,40 112,22"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Salary Calculator -->
+    <section id="calc" class="card">
+      <h2>Salary calculator</h2>
+      <p class="hint">Pick your input frequency, type the amount, then hit <strong>Calculate</strong>. If you choose Hourly, set hours per week too.</p>
+
+      <div class="row">
+        <div>
+          <label for="freq">Input frequency</label>
+          <select id="freq">
+            <option value="annual">Annual</option>
+            <option value="monthly">Monthly</option>
+            <option value="biweekly">Bi‑weekly (26)</option>
+            <option value="weekly">Weekly (52)</option>
+            <option value="hourly">Hourly</option>
+          </select>
+        </div>
+        <div>
+          <label for="amount">Amount</label>
+          <input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 45000" />
+        </div>
+      </div>
+
+      <div class="row" id="hoursRow" style="margin-top:10px;display:none">
+        <div>
+          <label for="hours">Hours per week</label>
+          <input id="hours" type="number" min="0" step="0.1" value="39" />
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button id="presetFT" class="ghost" type="button">Set 39h / wk</button>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <div><button id="calcBtn" class="primary" type="button">Calculate</button></div>
+        <div class="row" style="grid-template-columns:repeat(3,1fr);gap:8px">
+          <button type="button" class="ghost" data-preset="30000">Preset €30k</button>
+          <button type="button" class="ghost" data-preset="45000">Preset €45k</button>
+          <button type="button" class="ghost" data-preset="60000">Preset €60k</button>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><span>Annual</span><strong class="mono" id="outAnnual">€0</strong></div>
+        <div class="kpi"><span>Monthly</span><strong class="mono" id="outMonthly">€0</strong></div>
+        <div class="kpi"><span>Bi‑weekly</span><strong class="mono" id="outBiweekly">€0</strong></div>
+        <div class="kpi"><span>Weekly</span><strong class="mono" id="outWeekly">€0</strong></div>
+      </div>
+    </section>
+
+    <!-- How-to section (implementation notes) -->
+    <section id="howto" class="card" style="margin-top:16px">
+      <h2>How to add just this calculator to another page</h2>
+      <ol class="hint">
+        <li>Copy everything between the comments <code>&lt;!-- Salary Calculator --&gt;</code> and the closing section tag into your page.</li>
+        <li>Copy the small JS block at the bottom (between <code>// SALARY CALC LOGIC</code> comments). If you already have a script tag, you can paste it after yours.</li>
+        <li>Keep the minimal CSS (the classes used: <code>.card, .row, .kpis, .kpi</code>). You can bring the whole style block or merge it into your stylesheet.</li>
+        <li>To embed inside Google Sites, publish this page (GitHub Pages) and use the URL with <em>Embed → By URL</em>. Set width to Full and give it enough height (around 1000–1400px for just this section).</li>
+      </ol>
+    </section>
+
+    <div class="footer hint">No data leaves your browser. This is a front‑end calculator.</div>
+  </main>
+
+  <script>
+    const € = n => n.toLocaleString(undefined,{style:'currency',currency:'EUR',maximumFractionDigits:0});
+
+    // Show hours when hourly is selected
+    const freqEl = document.getElementById('freq');
+    const amountEl = document.getElementById('amount');
+    const hoursRow = document.getElementById('hoursRow');
+    const hoursEl = document.getElementById('hours');
+    freqEl.addEventListener('change', ()=>{
+      hoursRow.style.display = freqEl.value==='hourly' ? '' : 'none';
+    });
+
+    // Presets for quick testing
+    document.querySelectorAll('[data-preset]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        freqEl.value='annual';
+        amountEl.value=btn.getAttribute('data-preset');
+        hoursRow.style.display='none';
+      });
+    });
+    document.getElementById('presetFT').addEventListener('click',()=>{hoursEl.value=39;});
+
+    // ---- SALARY CALC LOGIC ----
+    function toAnnual(freq, amount, hours){
+      const v = Number(amount||0);
+      switch(freq){
+        case 'annual': return v;
+        case 'monthly': return v*12;
+        case 'biweekly': return v*26;
+        case 'weekly': return v*52;
+        case 'hourly': return v*Number(hours||0)*52; // hours per week
+        default: return 0;
+      }
+    }
+    function fillOutputs(annual){
+      document.getElementById('outAnnual').textContent = €(annual);
+      document.getElementById('outMonthly').textContent = €(annual/12);
+      document.getElementById('outBiweekly').textContent = €(annual/26);
+      document.getElementById('outWeekly').textContent = €(annual/52);
+    }
+
+    document.getElementById('calcBtn').addEventListener('click', ()=>{
+      const annual = toAnnual(freqEl.value, amountEl.value, hoursEl.value);
+      fillOutputs(annual);
+    });
+
+    // Optional: calculate on Enter key within amount field
+    amountEl.addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ document.getElementById('calcBtn').click(); }});
+  </script>
+</body>
+</html>
