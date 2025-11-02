@@ -3,36 +3,31 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Salary Calculator — Ireland (Starter)</title>
+  <title>Irish Money Planner — Salary → Pension → Tax → Expenses → Savings → Spending → Overview</title>
   <style>
     :root{--bg:#0b0f14;--ink:#e6edf3;--muted:#9fb0c5;--card:#101722;--line:#223044;--accent:#7c5cff;--accent2:#22c55e}
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; color:var(--ink); background:radial-gradient(1000px 600px at 90% -10%, #1a2230 20%, transparent 60%) var(--bg)}
-    a{color:var(--accent)}
+    body{margin:0;font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; color:var(--ink); background:radial-gradient(1200px 900px at 85% -20%, #1a2230 15%, transparent 60%) var(--bg)}
+    a{color:var(--accent);text-decoration:none}
 
-    /* Header with extra flair */
+    /* Header */
     header{position:sticky;top:0;z-index:50;background:#0b0f1490;backdrop-filter:blur(8px) saturate(160%);border-bottom:1px solid #141d2a}
-    .nav{max-width:1100px;margin:auto;display:flex;gap:16px;align-items:center;padding:10px 16px}
+    .nav{max-width:1200px;margin:auto;display:flex;gap:16px;align-items:center;padding:10px 16px}
     .brand{display:flex;align-items:center;gap:10px;font-weight:800}
     .brand svg{filter:drop-shadow(0 6px 18px #0006)}
     .spacer{flex:1}
-    .nav a{color:#cbd5e1;text-decoration:none;padding:8px 10px;border-radius:10px}
+    .nav a{color:#cbd5e1;padding:8px 10px;border-radius:10px}
     .nav a:hover{background:#0e1622}
 
-    .hero{border-bottom:1px solid #141d2a;background:conic-gradient(from 210deg at 80% -40%, #23185a 0deg, #121a2b 90deg, #0f1420 180deg, #23185a 360deg)}
-    .hero-inner{max-width:1100px;margin:0 auto;padding:28px 16px 36px;display:grid;grid-template-columns:1.2fr .8fr;gap:16px;align-items:center}
-    .hero h1{margin:0 0 6px;font-size:2rem}
-    .hero p{margin:0;color:var(--muted)}
-    .flare{position:relative;height:170px}
-    .flare .card{position:absolute;inset:auto;border:1px solid #293448;background:#0f172a;border-radius:18px;box-shadow:0 10px 36px #0006;padding:10px}
-    .flare .c1{right:0;top:-6px;transform:rotate(-2deg)}
-    .flare .c2{left:6%;bottom:-18px;transform:rotate(3deg)}
-
-    main{max-width:1100px;margin:24px auto 64px;padding:0 16px}
+    /* Full-page sections */
+    main{max-width:1100px;margin:0 auto}
+    section.page{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:32px 16px;scroll-margin-top:76px}
     .card{background:linear-gradient(180deg,#101722,#0f141b);border:1px solid var(--line);border-radius:18px;padding:18px}
-    h2{margin:4px 0 10px;font-size:1.2rem}
-    .hint{color:var(--muted);font-size:.92rem;margin-bottom:8px}
+    h1,h2{margin:0 0 10px}
+    h1{font-size:2rem}
+    h2{font-size:1.25rem}
+    .hint{color:var(--muted);font-size:.95rem;margin-bottom:8px}
 
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
@@ -45,188 +40,352 @@
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
     .kpi{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#0c1219;border:1px solid var(--line);border-radius:12px}
     .mono{font-variant-numeric:tabular-nums}
+    .split{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+    .mt12{margin-top:12px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px dashed #2a3a50}
+    tr:last-child td{border-bottom:none}
 
-    .footer{opacity:.8;text-align:center;margin-top:28px}
+    .footer{opacity:.7;text-align:center;padding:28px 0}
   </style>
 </head>
 <body>
   <header>
     <div class="nav">
       <div class="brand">
-        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs>
-          <rect x="6" y="6" width="36" height="36" rx="10" fill="url(#g)"/></svg>
-        <span>Salary Calculator — Ireland</span>
+        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs><rect x="6" y="6" width="36" height="36" rx="10" fill="url(#g)"/></svg>
+        <span>Irish Money Planner</span>
       </div>
       <div class="spacer"></div>
-      <a href="#calc">Calculator</a>
-      <a href="#howto">How to add this</a>
-    </div>
-    <div class="hero">
-      <div class="hero-inner">
-        <div>
-          <h1>Crystal‑clear salary breakdowns</h1>
-          <p>Enter your pay once. Get instant Annual • Monthly • Bi‑weekly • Weekly amounts. Click Calculate to lock it in.</p>
-        </div>
-        <div class="flare" aria-hidden="true">
-          <div class="card c1">
-            <svg width="250" height="150" viewBox="0 0 250 150" xmlns="http://www.w3.org/2000/svg">
-              <rect x="8" y="8" rx="14" ry="14" width="234" height="134" fill="#0e1726" stroke="#2a3650"/>
-              <rect x="8" y="48" width="234" height="16" fill="#7c5cff" opacity="0.6"/>
-              <rect x="24" y="88" width="80" height="14" rx="7" fill="#101b2b" stroke="#2a3650"/>
-              <circle cx="188" cy="96" r="12" fill="#22c55e"/>
-              <circle cx="208" cy="96" r="12" fill="#7c5cff" opacity="0.9"/>
-            </svg>
-          </div>
-          <div class="card c2">
-            <svg width="230" height="160" viewBox="0 0 230 160" xmlns="http://www.w3.org/2000/svg">
-              <rect x="8" y="8" rx="14" ry="14" width="214" height="144" fill="#0e1726" stroke="#2a3650"/>
-              <g transform="translate(22,24)">
-                <rect x="0" y="66" width="20" height="46" fill="#384a6a"/>
-                <rect x="28" y="52" width="20" height="60" fill="#4c5f82"/>
-                <rect x="56" y="34" width="20" height="78" fill="#6b7ba1"/>
-                <rect x="84" y="16" width="20" height="96" fill="#7c8db4"/>
-                <polyline fill="none" stroke="#7c5cff" stroke-width="3" points="0,72 38,58 74,40 112,22"/>
-              </g>
-            </svg>
-          </div>
-        </div>
-      </div>
+      <a href="#salary">Salary</a>
+      <a href="#pension">Pension</a>
+      <a href="#tax">Tax</a>
+      <a href="#expenses">Expenses</a>
+      <a href="#savings">Savings</a>
+      <a href="#spending">Spending</a>
+      <a href="#overview">Overview</a>
     </div>
   </header>
 
   <main>
-    <!-- Salary Calculator -->
-    <section id="calc" class="card">
-      <h2>Salary calculator</h2>
-      <p class="hint">Pick your input frequency, type the amount, then hit <strong>Calculate</strong>. If you choose Hourly, set hours per week too.</p>
-      <p class="hint" id="debugStatus" style="display:none"></p>
-
-      <div class="row">
+    <!-- SALARY PAGE -->
+    <section id="salary" class="page">
+      <div class="split">
         <div>
-          <label for="freq">Input frequency</label>
-          <select id="freq">
-            <option value="annual">Annual</option>
-            <option value="monthly">Monthly</option>
-            <option value="biweekly">Bi‑weekly (26)</option>
-            <option value="weekly">Weekly (52)</option>
-            <option value="hourly">Hourly</option>
-          </select>
+          <h1>Salary</h1>
+          <p class="hint">Pick your input frequency, type the amount, then hit <strong>Calculate</strong>. If you choose Hourly, set hours per week too.</p>
+          <div class="card">
+            <div class="row">
+              <div>
+                <label for="freq">Input frequency</label>
+                <select id="freq">
+                  <option value="annual">Annual</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="biweekly">Bi‑weekly (26)</option>
+                  <option value="weekly">Weekly (52)</option>
+                  <option value="hourly">Hourly</option>
+                </select>
+              </div>
+              <div>
+                <label for="amount">Amount</label>
+                <input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 45000" />
+              </div>
+            </div>
+            <div class="row mt12" id="hoursRow" style="display:none">
+              <div>
+                <label for="hours">Hours per week</label>
+                <input id="hours" type="number" min="0" step="0.1" value="39" />
+              </div>
+              <div>
+                <label>&nbsp;</label>
+                <button id="presetFT" class="ghost" type="button">Set 39h / wk</button>
+              </div>
+            </div>
+            <div class="row mt12">
+              <div><button id="calcSalary" class="primary" type="button">Calculate</button></div>
+              <div class="row" style="grid-template-columns:repeat(3,1fr);gap:8px"><button type="button" class="ghost" data-preset="30000">Preset €30k</button><button type="button" class="ghost" data-preset="45000">Preset €45k</button><button type="button" class="ghost" data-preset="60000">Preset €60k</button></div>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><span>Annual</span><strong class="mono" id="salAnnual">€0</strong></div>
+              <div class="kpi"><span>Monthly</span><strong class="mono" id="salMonthly">€0</strong></div>
+              <div class="kpi"><span>Bi‑weekly</span><strong class="mono" id="salBiweekly">€0</strong></div>
+              <div class="kpi"><span>Weekly</span><strong class="mono" id="salWeekly">€0</strong></div>
+            </div>
+          </div>
+          <p class="hint" id="dbgSalary" style="display:none"></p>
         </div>
-        <div>
-          <label for="amount">Amount</label>
-          <input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 45000" />
+        <div class="card">
+          <h2>Why this matters</h2>
+          <p class="hint">All later sections (tax, pension, savings) hinge on this number. Confirm it first.</p>
+          <ul class="hint">
+            <li>Monthly pay? Include regular allowances/bonus if taxed as pay.</li>
+            <li>Hourly? Use your average hours (Irish FT: ~37.5–40).</li>
+          </ul>
         </div>
-      </div>
-
-      <div class="row" id="hoursRow" style="margin-top:10px;display:none">
-        <div>
-          <label for="hours">Hours per week</label>
-          <input id="hours" type="number" min="0" step="0.1" value="39" />
-        </div>
-        <div>
-          <label>&nbsp;</label>
-          <button id="presetFT" class="ghost" type="button">Set 39h / wk</button>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:12px">
-        <div><button id="calcBtn" class="primary" type="button">Calculate</button></div>
-        <div class="row" style="grid-template-columns:repeat(3,1fr);gap:8px">
-          <button type="button" class="ghost" data-preset="30000">Preset €30k</button>
-          <button type="button" class="ghost" data-preset="45000">Preset €45k</button>
-          <button type="button" class="ghost" data-preset="60000">Preset €60k</button>
-        </div>
-      </div>
-
-      <div class="kpis">
-        <div class="kpi"><span>Annual</span><strong class="mono" id="outAnnual">€0</strong></div>
-        <div class="kpi"><span>Monthly</span><strong class="mono" id="outMonthly">€0</strong></div>
-        <div class="kpi"><span>Bi‑weekly</span><strong class="mono" id="outBiweekly">€0</strong></div>
-        <div class="kpi"><span>Weekly</span><strong class="mono" id="outWeekly">€0</strong></div>
       </div>
     </section>
 
-    <!-- How-to section (implementation notes) -->
-    <section id="howto" class="card" style="margin-top:16px">
-      <h2>How to add just this calculator to another page</h2>
-      <ol class="hint">
-        <li>Copy everything between the comments <code>&lt;!-- Salary Calculator --&gt;</code> and the closing section tag into your page.</li>
-        <li>Copy the small JS block at the bottom (between <code>// SALARY CALC LOGIC</code> comments). If you already have a script tag, you can paste it after yours.</li>
-        <li>Keep the minimal CSS (the classes used: <code>.card, .row, .kpis, .kpi</code>). You can bring the whole style block or merge it into your stylesheet.</li>
-        <li>To embed inside Google Sites, publish this page (GitHub Pages) and use the URL with <em>Embed → By URL</em>. Set width to Full and give it enough height (around 1000–1400px for just this section).</li>
-      </ol>
+    <!-- PENSION PAGE -->
+    <section id="pension" class="page">
+      <div class="split">
+        <div>
+          <h1>Pension contributions</h1>
+          <p class="hint">Enter your contribution %, employer match %, assumed annual return, and horizon. Click Calculate.</p>
+          <div class="card">
+            <div class="row3">
+              <div><label for="eePct">Your % of gross</label><input id="eePct" type="number" min="0" max="100" step="0.1" value="5"></div>
+              <div><label for="erPct">Employer match %</label><input id="erPct" type="number" min="0" max="100" step="0.1" value="5"></div>
+              <div><label for="retPct">Assumed return % (annual)</label><input id="retPct" type="number" min="-10" max="20" step="0.1" value="5"></div>
+            </div>
+            <div class="row mt12">
+              <div><label for="penYears">Years</label><input id="penYears" type="number" min="1" max="40" step="1" value="5"></div>
+              <div><label>&nbsp;</label><button id="calcPension" class="primary" type="button">Calculate</button></div>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><span>Employee €/yr</span><strong class="mono" id="penEE">€0</strong></div>
+              <div class="kpi"><span>Employer €/yr</span><strong class="mono" id="penER">€0</strong></div>
+              <div class="kpi"><span>Monthly total</span><strong class="mono" id="penMonthly">€0</strong></div>
+              <div class="kpi"><span>Projected pot</span><strong class="mono" id="penPot">€0</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Tip</h2>
+          <p class="hint">Capture the full match first—it's essentially free pay. Then nudge +1%/year.</p>
+        </div>
+      </div>
     </section>
 
-    <div class="footer hint">No data leaves your browser. This is a front‑end calculator.</div>
+    <!-- TAX PAGE -->
+    <section id="tax" class="page">
+      <div class="split">
+        <div>
+          <h1>Tax (Ireland 2025)</h1>
+          <p class="hint">PAYE + USC + PRSI (employee Class A). Enter status & credits, then Calculate.</p>
+          <div class="card">
+            <div class="row3">
+              <div><label for="status">Status</label>
+                <select id="status">
+                  <option value="single" selected>Single</option>
+                  <option value="married_one">Married (one income)</option>
+                  <option value="married_two">Married (both incomes)</option>
+                  <option value="single_parent">Single parent</option>
+                </select>
+              </div>
+              <div><label for="credits">Tax credits €/yr</label><input id="credits" type="number" min="0" step="1" value="4000"></div>
+              <div><label>&nbsp;</label><button id="calcTax" class="primary" type="button">Calculate</button></div>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><span>PAYE</span><strong class="mono" id="outPAYE">€0</strong></div>
+              <div class="kpi"><span>USC</span><strong class="mono" id="outUSC">€0</strong></div>
+              <div class="kpi"><span>PRSI</span><strong class="mono" id="outPRSI">€0</strong></div>
+              <div class="kpi"><span>Total tax</span><strong class="mono" id="outTax">€0</strong></div>
+            </div>
+            <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+              <div class="kpi"><span>Net annual</span><strong class="mono" id="netAnnual">€0</strong></div>
+              <div class="kpi"><span>Net monthly</span><strong class="mono" id="netMonthly">€0</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="card"><h2>Heads‑up</h2><p class="hint">We use standard 20%/40% bands with status‑based cutoff, USC 2025 bands, and PRSI with tapered credit at ~€352–€424/wk and an Oct rate step (4.1→4.2%).</p></div>
+      </div>
+    </section>
+
+    <!-- EXPENSES PAGE -->
+    <section id="expenses" class="page">
+      <div class="split">
+        <div>
+          <h1>Expenses</h1>
+          <p class="hint">Add fixed and variable costs. Choose frequency. Click Update to total.</p>
+          <div class="card">
+            <div class="row mt12">
+              <div><button id="addExp" type="button" class="ghost">+ Add expense</button></div>
+              <div><button id="clearExp" type="button" class="ghost">Clear</button></div>
+              <div><button id="calcExp" type="button" class="primary">Update</button></div>
+            </div>
+            <table class="mt12" id="expTable">
+              <thead><tr><th>Name</th><th>Amount</th><th>Freq</th><th class="right">Annualised</th><th></th></tr></thead>
+              <tbody></tbody>
+              <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="expTotal" class="mono">€0</td><td></td></tr></tfoot>
+            </table>
+          </div>
+        </div>
+        <div class="card"><h2>Tip</h2><p class="hint">Put annual items (insurance, car tax) as Annual to avoid surprises.</p></div>
+      </div>
+    </section>
+
+    <!-- SAVINGS PAGE -->
+    <section id="savings" class="page">
+      <div class="split">
+        <div>
+          <h1>Savings</h1>
+          <p class="hint">Choose a savings rate on your net income. We’ll suggest monthly saving.</p>
+          <div class="card">
+            <div class="row">
+              <div><label for="saveRate">Target savings % of net</label><input id="saveRate" type="number" min="0" max="100" step="0.5" value="20"></div>
+              <div><label>&nbsp;</label><button id="calcSave" class="primary" type="button">Calculate</button></div>
+            </div>
+            <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+              <div class="kpi"><span>Suggested monthly</span><strong class="mono" id="saveMonthly">€0</strong></div>
+              <div class="kpi"><span>Annual savings</span><strong class="mono" id="saveAnnual">€0</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="card"><h2>Rule of thumb</h2><p class="hint">Aim for 3–6 months of expenses as an emergency buffer.</p></div>
+      </div>
+    </section>
+
+    <!-- SPENDING PAGE -->
+    <section id="spending" class="page">
+      <div class="split">
+        <div>
+          <h1>Spending</h1>
+          <p class="hint">See what’s free to spend after taxes, expenses, and planned saving.</p>
+          <div class="card">
+            <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+              <div class="kpi"><span>Net monthly</span><strong class="mono" id="spNetMonthly">€0</strong></div>
+              <div class="kpi"><span>Expenses monthly</span><strong class="mono" id="spExpMonthly">€0</strong></div>
+              <div class="kpi"><span>Free to spend (mo)</span><strong class="mono" id="spFreeMonthly">€0</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="card"><h2>Tip</h2><p class="hint">Automate savings day-after-payday so the free-to-spend number is real.</p></div>
+      </div>
+    </section>
+
+    <!-- OVERVIEW PAGE -->
+    <section id="overview" class="page">
+      <div class="split">
+        <div>
+          <h1>Overview & goals</h1>
+          <p class="hint">Summary + time-to-goal calculator.</p>
+          <div class="card">
+            <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+              <div class="kpi"><span>Gross annual</span><strong class="mono" id="ovGross">€0</strong></div>
+              <div class="kpi"><span>Total tax</span><strong class="mono" id="ovTax">€0</strong></div>
+              <div class="kpi"><span>Net annual</span><strong class="mono" id="ovNet">€0</strong></div>
+              <div class="kpi"><span>Expenses annual</span><strong class="mono" id="ovExp">€0</strong></div>
+            </div>
+            <div class="kpis" style="grid-template-columns:repeat(3,1fr)" class="mt12">
+              <div class="kpi"><span>Free cashflow (yr)</span><strong class="mono" id="ovFree">€0</strong></div>
+              <div class="kpi"><span>Suggested saving (mo)</span><strong class="mono" id="ovSaveMo">€0</strong></div>
+              <div class="kpi"><span>Runway (months)</span><strong class="mono" id="ovRunway">—</strong></div>
+            </div>
+            <div class="row mt12">
+              <div><label for="goalAmount">Goal amount (€)</label><input id="goalAmount" type="number" min="0" step="1" value="10000"></div>
+              <div><label for="goalCurrent">Current saved (€)</label><input id="goalCurrent" type="number" min="0" step="1" value="0"></div>
+            </div>
+            <div class="row mt12">
+              <div><label for="goalMonthly">Monthly contribution (€)</label><input id="goalMonthly" type="number" min="0" step="1" value="500"></div>
+              <div><label>&nbsp;</label><button id="calcGoal" class="primary" type="button">Calculate goal</button></div>
+            </div>
+            <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+              <div class="kpi"><span>Months to goal</span><strong class="mono" id="goalMonths">—</strong></div>
+              <div class="kpi"><span>Target date</span><strong class="mono" id="goalDate">—</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="card"><h2>Note</h2><p class="hint">Numbers update when you click Calculate in each section. Tweak and recalc as needed.</p></div>
+      </div>
+    </section>
+
+    <div class="footer hint">No data leaves your browser. 2025 Irish tax model; verify specifics for your case.</div>
   </main>
 
   <script>
-    // Robust version: waits for DOM, avoids exotic identifiers, adds visible debug
     document.addEventListener('DOMContentLoaded', function(){
-      const debug = document.getElementById('debugStatus');
-      function showDebug(msg, ok=true){ if(!debug) return; debug.style.display='block'; debug.style.color = ok ? '#9fe6b8' : '#fca5a5'; debug.textContent = msg; }
+      const fmt = n => Number(n||0).toLocaleString(undefined,{style:'currency',currency:'EUR',maximumFractionDigits:0});
 
-      // Safer currency formatter (no unicode identifier)
-      function formatEUR(n){ return Number(n||0).toLocaleString(undefined,{style:'currency',currency:'EUR',maximumFractionDigits:0}); }
+      // ------- Shared state -------
+      const state = { annualGross:0, netAnnual:0, totalTax:0, expensesAnnual:0, saveRate:0.20 };
 
-      // Grab elements and guard
+      // ------- Salary -------
       const freqEl = document.getElementById('freq');
       const amountEl = document.getElementById('amount');
       const hoursRow = document.getElementById('hoursRow');
       const hoursEl = document.getElementById('hours');
-      const calcBtn = document.getElementById('calcBtn');
-      const outAnnual = document.getElementById('outAnnual');
-      const outMonthly = document.getElementById('outMonthly');
-      const outBiweekly = document.getElementById('outBiweekly');
-      const outWeekly = document.getElementById('outWeekly');
-
-      if(!freqEl || !amountEl || !hoursRow || !hoursEl || !calcBtn || !outAnnual){
-        showDebug('Script loaded but some elements were not found. Did Google Sites strip IDs or are you embedding only a fragment?', false);
-        return;
-      }
-
-      // Toggle hours row
+      const dbgSalary = document.getElementById('dbgSalary');
+      function showDbg(m){ dbgSalary.style.display='block'; dbgSalary.textContent=m; }
       freqEl.addEventListener('change', ()=>{ hoursRow.style.display = freqEl.value==='hourly' ? '' : 'none'; });
-
-      // Presets
-      document.querySelectorAll('[data-preset]').forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          freqEl.value='annual';
-          amountEl.value=btn.getAttribute('data-preset');
-          hoursRow.style.display='none';
-        });
-      });
-      const presetFT = document.getElementById('presetFT');
-      if(presetFT){ presetFT.addEventListener('click',()=>{hoursEl.value=39;}); }
-
-      // Core calc
+      document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{freqEl.value='annual';amountEl.value=b.getAttribute('data-preset');hoursRow.style.display='none';}));
+      document.getElementById('presetFT').addEventListener('click',()=>{hoursEl.value=39});
       function toAnnual(freq, amount, hours){
         const v = Number(amount||0);
-        switch(freq){
-          case 'annual': return v;
-          case 'monthly': return v*12;
-          case 'biweekly': return v*26;
-          case 'weekly': return v*52;
-          case 'hourly': return v*Number(hours||0)*52; // hours per week
-          default: return 0;
-        }
+        switch(freq){case 'annual': return v; case 'monthly': return v*12; case 'biweekly': return v*26; case 'weekly': return v*52; case 'hourly': return v*Number(hours||0)*52; default: return 0;}
       }
-      function fillOutputs(annual){
-        outAnnual.textContent = formatEUR(annual);
-        outMonthly.textContent = formatEUR(annual/12);
-        outBiweekly.textContent = formatEUR(annual/26);
-        outWeekly.textContent = formatEUR(annual/52);
+      function fillSalary(a){
+        document.getElementById('salAnnual').textContent = fmt(a);
+        document.getElementById('salMonthly').textContent = fmt(a/12);
+        document.getElementById('salBiweekly').textContent = fmt(a/26);
+        document.getElementById('salWeekly').textContent = fmt(a/52);
       }
-
-      calcBtn.addEventListener('click', ()=>{
-        const annual = toAnnual(freqEl.value, amountEl.value, hoursEl.value);
-        fillOutputs(annual);
-        showDebug('Calculated ✔');
+      document.getElementById('calcSalary').addEventListener('click', ()=>{
+        const a = toAnnual(freqEl.value, amountEl.value, hoursEl.value);
+        state.annualGross = a; fillSalary(a); showDbg('Salary calculated');
       });
-      amountEl.addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ calcBtn.click(); }});
 
-      showDebug('Calculator ready');
+      // ------- Pension -------
+      function fvSeries(monthly, years, annualReturn){ const r = (annualReturn/100)/12; const n = years*12; if(r===0) return monthly*n; return monthly*((Math.pow(1+r,n)-1)/r); }
+      document.getElementById('calcPension').addEventListener('click', ()=>{
+        const ee = Number(document.getElementById('eePct').value||0)/100 * state.annualGross;
+        const er = Number(document.getElementById('erPct').value||0)/100 * state.annualGross;
+        const monthly = (ee+er)/12;
+        const fv = fvSeries(monthly, Number(document.getElementById('penYears').value||0), Number(document.getElementById('retPct').value||0));
+        document.getElementById('penEE').textContent = fmt(ee);
+        document.getElementById('penER').textContent = fmt(er);
+        document.getElementById('penMonthly').textContent = fmt(monthly);
+        document.getElementById('penPot').textContent = fmt(fv);
+      });
+
+      // ------- Tax (Ireland 2025) -------
+      const TAX = { standard:0.20, higher:0.40, bands:{single:44000,married_one:53000,married_two:88000,single_parent:49000}, usc:[{upTo:12012,rate:0.005},{upTo:27382,rate:0.02},{upTo:70044,rate:0.03},{upTo:Infinity,rate:0.08}], prsi:{weeklyNil:352, creditStart:352.01, creditEnd:424, creditMax:12, rate1:0.041, rate2:0.042, weeks1:39, weeks2:13} };
+      function calcPAYE(annual){ const band=TAX.bands[document.getElementById('status').value]||TAX.bands.single; const at20=Math.min(annual,band); const at40=Math.max(0,annual-band); let t=at20*TAX.standard+at40*TAX.higher; t -= Number(document.getElementById('credits').value||0); return Math.max(0,t); }
+      function calcUSC(annual){ if(annual<13000) return 0; let rem=annual, last=0, u=0; for(const b of TAX.usc){ const cap=Math.min(rem,b.upTo-last); if(cap>0){u+=cap*b.rate; rem-=cap; last=b.upTo;} if(rem<=0) break;} return u; }
+      function weeklyPRSI(weekly,isAfter){ if(weekly<=TAX.prsi.weeklyNil) return 0; const rate=isAfter?TAX.prsi.rate2:TAX.prsi.rate1; let ch=weekly*rate; if(weekly>TAX.prsi.creditStart && weekly<=TAX.prsi.creditEnd){ const p=(TAX.prsi.creditEnd-weekly)/(TAX.prsi.creditEnd-TAX.prsi.creditStart); ch=Math.max(0, ch - TAX.prsi.creditMax*p);} return ch; }
+      function calcPRSI(annual){ const w=annual/52; return weeklyPRSI(w,false)*TAX.prsi.weeks1 + weeklyPRSI(w,true)*TAX.prsi.weeks2; }
+      document.getElementById('calcTax').addEventListener('click', ()=>{
+        const a = state.annualGross || 0; const paye=calcPAYE(a); const usc=calcUSC(a); const prsi=calcPRSI(a); const total=paye+usc+prsi; const net=Math.max(0,a-total);
+        state.totalTax = total; state.netAnnual = net;
+        document.getElementById('outPAYE').textContent=fmt(paye); document.getElementById('outUSC').textContent=fmt(usc); document.getElementById('outPRSI').textContent=fmt(prsi); document.getElementById('outTax').textContent=fmt(total);
+        document.getElementById('netAnnual').textContent=fmt(net); document.getElementById('netMonthly').textContent=fmt(net/12);
+        // update spending snapshot if available
+        syncSpending();
+      });
+
+      // ------- Expenses -------
+      const tbody = document.querySelector('#expTable tbody');
+      const expenses = [];
+      function expAnnual(amount,freq){ const v=Number(amount||0); if(freq==='weekly') return v*52; if(freq==='monthly') return v*12; return v; }
+      function renderExp(){ tbody.innerHTML=''; let total=0; expenses.forEach((e,i)=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td><input data-i="${i}" data-k="name" value="${e.name}"></td>
+        <td><input type="number" step="0.01" min="0" data-i="${i}" data-k="amount" value="${e.amount}"></td>
+        <td><select data-i="${i}" data-k="freq"><option value="monthly" ${e.freq==='monthly'?'selected':''}>Monthly</option><option value="weekly" ${e.freq==='weekly'?'selected':''}>Weekly</option><option value="annual" ${e.freq==='annual'?'selected':''}>Annual</option></select></td>
+        <td class="mono">${fmt(expAnnual(e.amount,e.freq))}</td>
+        <td><button class="ghost" data-remove="${i}">✕</button></td>`; tbody.appendChild(tr); total+=expAnnual(e.amount,e.freq); });
+        document.getElementById('expTotal').textContent=fmt(total); return total; }
+      document.getElementById('addExp').addEventListener('click',()=>{ expenses.push({name:'',amount:0,freq:'monthly'}); renderExp(); });
+      document.getElementById('clearExp').addEventListener('click',()=>{ expenses.length=0; renderExp(); });
+      tbody.addEventListener('input',e=>{ const i=e.target.getAttribute('data-i'); const k=e.target.getAttribute('data-k'); if(i!==null){ expenses[i][k]= k==='amount'? Number(e.target.value||0): e.target.value; }});
+      tbody.addEventListener('click',e=>{ const i=e.target.getAttribute('data-remove'); if(i!==null){ expenses.splice(i,1); renderExp(); }});
+      document.getElementById('calcExp').addEventListener('click',()=>{ state.expensesAnnual = renderExp(); syncSpending(); });
+      // initial rows
+      expenses.push({name:'Rent',amount:0,freq:'monthly'},{name:'Utilities',amount:0,freq:'monthly'},{name:'Transport',amount:0,freq:'monthly'}); renderExp();
+
+      // ------- Savings -------
+      document.getElementById('calcSave').addEventListener('click',()=>{ const rate=Number(document.getElementById('saveRate').value||0)/100; state.saveRate=rate; const mo=(state.netAnnual/12)*rate; document.getElementById('saveMonthly').textContent=fmt(mo); document.getElementById('saveAnnual').textContent=fmt(mo*12); syncSpending(); });
+
+      // ------- Spending snapshot -------
+      function syncSpending(){ const netMo = state.netAnnual/12; const expMo = (state.expensesAnnual||0)/12; const saveMo = netMo*(state.saveRate||0); const freeMo = Math.max(0, netMo - expMo - saveMo); document.getElementById('spNetMonthly').textContent=fmt(netMo); document.getElementById('spExpMonthly').textContent=fmt(expMo); document.getElementById('spFreeMonthly').textContent=fmt(freeMo); }
+
+      // ------- Overview -------
+      function syncOverview(){ const netMo=state.netAnnual/12; const expMo=(state.expensesAnnual||0)/12; const saveMo=netMo*(state.saveRate||0); const freeYr=Math.max(0, state.netAnnual - (state.expensesAnnual||0)); const runway = expMo>0 ? (freeYr/expMo) : 0; document.getElementById('ovGross').textContent=fmt(state.annualGross); document.getElementById('ovTax').textContent=fmt(state.totalTax); document.getElementById('ovNet').textContent=fmt(state.netAnnual); document.getElementById('ovExp').textContent=fmt(state.expensesAnnual||0); document.getElementById('ovFree').textContent=fmt(freeYr); document.getElementById('ovSaveMo').textContent=fmt(saveMo); document.getElementById('ovRunway').textContent= runway? runway.toFixed(1): '—'; }
+      ['calcSalary','calcTax','calcExp','calcSave'].forEach(id=>{ document.getElementById(id).addEventListener('click', syncOverview); });
+
+      // goal calc
+      function addMonths(d, m){ const dt=new Date(d.getTime()); dt.setMonth(dt.getMonth()+m); return dt; }
+      document.getElementById('calcGoal').addEventListener('click',()=>{ const goal=Number(document.getElementById('goalAmount').value||0); const cur=Number(document.getElementById('goalCurrent').value||0); const mo=Number(document.getElementById('goalMonthly').value||0); if(mo<=0 || goal<=cur){ document.getElementById('goalMonths').textContent='—'; document.getElementById('goalDate').textContent='—'; return; } const months=Math.ceil((goal-cur)/mo); const target=addMonths(new Date(), months); document.getElementById('goalMonths').textContent=months; document.getElementById('goalDate').textContent=target.toLocaleDateString(); });
+
+      // set an initial baseline
+      fillSalary(0); syncSpending(); syncOverview();
     });
   </script>
 </body>
