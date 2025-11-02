@@ -31,7 +31,6 @@
 
     main{max-width:1200px;margin:10px auto 64px;padding:0 14px}
     section.page{min-height:86vh;display:flex;flex-direction:column;justify-content:center;padding:18px 0;scroll-margin-top:76px}
-    /* give right column (charts) more width */
     .split{display:grid;grid-template-columns:1fr 1.35fr;gap:20px}
 
     .card{background:linear-gradient(180deg,var(--card),#0d121a);border:1px solid var(--line);border-radius:16px;padding:14px}
@@ -52,7 +51,6 @@
     .kpi{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#0c1219;border:1px solid var(--line);border-radius:12px}
     .mono{font-variant-numeric:tabular-nums}
 
-    /* more breathing room for charts + larger default */
     .chart{background:#0c1219;border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;min-height:360px}
     .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
     .legend span{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;color:#c8d3e1}
@@ -269,8 +267,13 @@
 
     // ===== Expenses =====
     const tbody=document.querySelector('#expTable tbody'); const expenses=[]; const expAnnual=(amount,freq)=>{const v=Number(amount||0); if(freq==='weekly') return v*52; if(freq==='monthly') return v*12; return v; };
-    function renderExpenses(){ tbody.innerHTML=''; let total=0; const svg=document.getElementById('chartExpenses'); svg.innerHTML=''; const w=520,h=320,p=28; let cats=[]; expenses.forEach((e,i)=>{ const ann=expAnnual(e.amount,e.freq); cats.push({n:e.name||`Item ${i+1}`, v:ann}); const tr=document.createElement('tr'); tr.innerHTML=`<td><input data-i="${i}" data-k="name" value="${e.name||''}"></td><td><input type="number" step="0.01" min="0" data-i="${i}" data-k="amount" value="${e.amount||0}"></td><td><select data-i="${i}" data-k="freq"><option value="monthly" ${e.freq==='monthly'?'selected':''}>Monthly</option><option value="weekly" ${e.freq==='weekly'?'selected':''}>Weekly</option><option value="annual" ${e.freq==='annual'?'selected':''}>Annual</option></select></td><td class="mono">${fmt(ann)}</td><td><button class="ghost" data-remove="${i}">✕</button></td>`; tbody.appendChild(tr); total+=ann; }); document.getElementById('expTotal').textContent=fmt(total); document.getElementById('expTotalMonthly').textContent=fmt(total/12);
-      const sorted=cats.filter(i=>i.v>0).sort((a,b)=>b.v-a.v).slice(0,8); const max=Math.max(1,...sorted.map(i=>i.v)); const barH=(h-2*p)/(sorted.length||1)-10; let y=p; sorted.forEach((it,idx)=>{ const wid=(w-2*p)*(it.v/max); const col=getCol(idx%6); svg.innerHTML += `<rect x="${p}" y="${y}" width="${wid}" height="${barH}" rx="6" fill="${col}"/>`; svg.innerHTML += `<text x="${p+8}" y="${y+barH-8}" fill="#0b0f14" font-size="12" font-weight="700">${it.n}</text>`; const tagX = p+wid+8; const tag = `${fmt(it.v/12)}/mo`; svg.innerHTML += `<rect x="${tagX-6}" y="${y+barH-20}" rx="8" ry="8" width="${8+tag.length*7}" height="22" fill="#0b0f14" stroke="#2a3a50"/>`; svg.innerHTML += `<text x="${tagX+4}" y="${y+barH-6}" fill="#e5e7eb" font-size="12">${tag}</text>`; y += barH+10; }); return total; }
+    function renderExpenses(){ tbody.innerHTML=''; let total=0; const svg=document.getElementById('chartExpenses'); svg.innerHTML=''; const w=520,h=320,p=28,labelW=140; let cats=[]; // table build
+      expenses.forEach((e,i)=>{ const ann=expAnnual(e.amount,e.freq); cats.push({n:e.name||`Item ${i+1}`,v:ann}); const tr=document.createElement('tr'); tr.innerHTML=`<td><input data-i="${i}" data-k="name" value="${e.name||''}"></td><td><input type="number" step="0.01" min="0" data-i="${i}" data-k="amount" value="${e.amount||0}"></td><td><select data-i="${i}" data-k="freq"><option value="monthly" ${e.freq==='monthly'?'selected':''}>Monthly</option><option value="weekly" ${e.freq==='weekly'?'selected':''}>Weekly</option><option value="annual" ${e.freq==='annual'?'selected':''}>Annual</option></select></td><td class="mono">${fmt(ann)}</td><td><button class="ghost" data-remove="${i}">✕</button></td>`; tbody.appendChild(tr); total+=ann; }); document.getElementById('expTotal').textContent=fmt(total); document.getElementById('expTotalMonthly').textContent=fmt(total/12);
+      // chart: left labels + €/mo, bars on right
+      const sorted=cats.filter(i=>i.v>0).sort((a,b)=>b.v-a.v).slice(0,10); const max=Math.max(1,...sorted.map(i=>i.v)); const rowH=(h-2*p)/(sorted.length||1); svg.innerHTML+=`<text x="${p+labelW/2}" y="${p-8}" fill="#9fb0c5" font-size="12" text-anchor="middle">Category</text>`; svg.innerHTML+=`<text x="${w-p}" y="${p-8}" fill="#9fb0c5" font-size="12" text-anchor="end">€ / month</text>`; let y=p; sorted.forEach((it,idx)=>{ const yMid=y+rowH/2; const col=getCol(idx); const perMo=fmt(it.v/12); // left labels
+        svg.innerHTML+=`<text x="${p+labelW-8}" y="${yMid-4}" fill="#cbd5e1" font-size="12" text-anchor="end">${it.n}</text>`; svg.innerHTML+=`<text x="${p+labelW-8}" y="${yMid+12}" fill="#9fb0c5" font-size="11" text-anchor="end">${perMo}/mo</text>`; // bar
+        const x0=p+labelW, maxBw=w-p-x0; const bw=Math.max(2,maxBw*(it.v/max)); const barY=yMid-10; svg.innerHTML+=`<rect x="${x0}" y="${barY}" width="${bw}" height="20" rx="8" fill="${col}"/>`; // end chip (auto inside if overflow)
+        const tag=`${perMo}/mo`; const tagW=tag.length*7+16; let tx=x0+bw+8, ty=yMid+4, anchor='start', boxX=tx-8; if(tx+tagW>w-p){ tx=x0+bw-8; anchor='end'; boxX=tx-tagW+8; } svg.innerHTML+=`<rect x="${boxX-6}" y="${barY-2}" width="${tagW}" height="24" rx="8" fill="#0b0f14" stroke="#2a3a50"/>`+`<text x="${tx}" y="${ty}" fill="#e5e7eb" font-size="12" text-anchor="${anchor}">${tag}</text>`; y+=rowH; }); return total; }
     document.getElementById('addExp').addEventListener('click',()=>{ expenses.push({name:'',amount:0,freq:'monthly'}); renderExpenses(); });
     document.getElementById('clearExp').addEventListener('click',()=>{ expenses.length=0; renderExpenses(); });
     tbody.addEventListener('input',e=>{ const i=e.target.getAttribute('data-i'); const k=e.target.getAttribute('data-k'); if(i!==null){ expenses[i][k]= k==='amount'? Number(e.target.value||0): e.target.value; }});
