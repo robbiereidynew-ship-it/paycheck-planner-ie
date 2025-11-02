@@ -3,14 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Irish Money Planner — Salary → Pension → Tax → Expenses → Savings → Spending → Overview</title>
+  <title>Irish Money Planner — with Charts</title>
   <style>
-    :root{--bg:#0b0f14;--ink:#e6edf3;--muted:#9fb0c5;--card:#101722;--line:#223044;--accent:#7c5cff;--accent2:#22c55e}
+    :root{--bg:#0b0f14;--ink:#e6edf3;--muted:#9fb0c5;--card:#101722;--line:#223044;--accent:#7c5cff;--accent2:#22c55e;--warn:#f59e0b}
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; color:var(--ink); background:radial-gradient(1200px 900px at 85% -20%, #1a2230 15%, transparent 60%) var(--bg)}
     a{color:var(--accent);text-decoration:none}
-
     header{position:sticky;top:0;z-index:50;background:#0b0f1490;backdrop-filter:blur(8px) saturate(160%);border-bottom:1px solid #141d2a}
     .nav{max-width:1200px;margin:auto;display:flex;gap:16px;align-items:center;padding:10px 16px}
     .brand{display:flex;align-items:center;gap:10px;font-weight:800}
@@ -26,7 +25,6 @@
     h1{font-size:2rem}
     h2{font-size:1.25rem}
     .hint{color:var(--muted);font-size:.95rem;margin-bottom:8px}
-
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
     label{display:block;font-size:.9rem;color:#a7b4c7;margin:6px 0}
@@ -43,7 +41,12 @@
     table{width:100%;border-collapse:collapse}
     th,td{padding:10px;border-bottom:1px dashed #2a3a50}
     tr:last-child td{border-bottom:none}
-
+    .chart{background:#0c1219;border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;align-items:center;justify-content:center;min-height:240px}
+    .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+    .legend span{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;color:#c8d3e1}
+    .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+    .c-exp{background:#7c5cff}.c-sav{background:#22c55e}.c-free{background:#94a3b8}
+    .c-paye{background:#7c5cff}.c-usc{background:#22c55e}.c-prsi{background:#94a3b8}.c-net{background:#f59e0b}.c-gross{background:#64748b}
     .footer{opacity:.7;text-align:center;padding:28px 0}
   </style>
 </head>
@@ -52,7 +55,7 @@
     <div class="nav">
       <div class="brand">
         <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs><rect x="6" y="6" width="36" height="36" rx="10" fill="url(#g)"/></svg>
-        <span>Irish Money Planner</span>
+        <span>Irish Money Planner — with Charts</span>
       </div>
       <div class="spacer"></div>
       <a href="#salary">Salary</a>
@@ -65,16 +68,15 @@
     </div>
   </header>
 
-  <!-- Simple intro banner -->
   <section class="page" style="min-height:auto;padding-top:18px;padding-bottom:12px">
     <div class="card" style="max-width:1100px;margin:0 auto">
       <h2 style="margin-bottom:6px">What this site does</h2>
-      <p class="hint" style="margin:0">Step through your Irish money flow: <strong>Salary → Pension → Tax → Expenses → Savings → Spending → Overview</strong>. Each section is a full page. Click <em>Calculate/Update</em> on each to refresh the numbers used later.</p>
+      <p class="hint" style="margin:0">Step through your Irish money flow with live charts: <strong>Salary → Pension → Tax → Expenses → Savings → Spending → Overview</strong>. Click <em>Calculate/Update</em> on each page; charts update automatically.</p>
     </div>
   </section>
 
   <main>
-    <!-- SALARY PAGE -->
+    <!-- SALARY PAGE (same as before) -->
     <section id="salary" class="page">
       <div class="split">
         <div>
@@ -118,25 +120,20 @@
               <div class="kpi"><span>Weekly</span><strong class="mono" id="salWeekly">€0</strong></div>
             </div>
           </div>
-          <p class="hint" id="dbgSalary" style="display:none"></p>
         </div>
         <div class="card">
           <h2>Why this matters</h2>
           <p class="hint">All later sections (tax, pension, savings) hinge on this number. Confirm it first.</p>
-          <ul class="hint">
-            <li>Monthly pay? Include regular allowances/bonus if taxed as pay.</li>
-            <li>Hourly? Use your average hours (Irish FT: ~37.5–40).</li>
-          </ul>
         </div>
       </div>
     </section>
 
-    <!-- PENSION PAGE -->
+    <!-- PENSION PAGE + curve chart -->
     <section id="pension" class="page">
       <div class="split">
         <div>
           <h1>Pension contributions</h1>
-          <p class="hint">Enter your contribution %, employer match %, assumed annual return, and horizon. Click Calculate.</p>
+          <p class="hint">Enter your %s, assumed return, and years. Click Calculate.</p>
           <div class="card">
             <div class="row3">
               <div><label for="eePct">Your % of gross</label><input id="eePct" type="number" min="0" max="100" step="0.1" value="5"></div>
@@ -156,13 +153,13 @@
           </div>
         </div>
         <div class="card">
-          <h2>Tip</h2>
-          <p class="hint">Capture the full match first—it's essentially free pay. Then nudge +1%/year.</p>
+          <h2>Growth over time</h2>
+          <div class="chart"><svg id="chartPension" viewBox="0 0 400 240" width="100%" height="100%" role="img" aria-label="Pension growth"></svg></div>
         </div>
       </div>
     </section>
 
-    <!-- TAX PAGE -->
+    <!-- TAX PAGE + waterfall chart -->
     <section id="tax" class="page">
       <div class="split">
         <div>
@@ -198,11 +195,15 @@
             </div>
           </div>
         </div>
-        <div class="card"><h2>Heads‑up</h2><p class="hint">We use standard 20%/40% bands with status‑based cutoff, USC 2025 bands, and PRSI with tapered credit at ~€352–€424/wk and an Oct rate step (4.1→4.2%).</p></div>
+        <div class="card">
+          <h2>Gross → Net (waterfall)</h2>
+          <div class="chart"><svg id="chartTax" viewBox="0 0 400 240" width="100%" height="100%" role="img" aria-label="Tax waterfall"></svg></div>
+          <div class="legend"><span><i class="dot c-gross"></i>Gross</span><span><i class="dot c-paye"></i>PAYE</span><span><i class="dot c-usc"></i>USC</span><span><i class="dot c-prsi"></i>PRSI</span><span><i class="dot c-net"></i>Net</span></div>
+        </div>
       </div>
     </section>
 
-    <!-- EXPENSES PAGE -->
+    <!-- EXPENSES PAGE + bars chart -->
     <section id="expenses" class="page">
       <div class="split">
         <div>
@@ -224,7 +225,10 @@
             </table>
           </div>
         </div>
-        <div class="card"><h2>Tip</h2><p class="hint">Put annual items (insurance, car tax) as Annual to avoid surprises.</p></div>
+        <div class="card">
+          <h2>Where it goes</h2>
+          <div class="chart"><svg id="chartExpenses" viewBox="0 0 400 240" width="100%" height="100%" role="img" aria-label="Expenses by category"></svg></div>
+        </div>
       </div>
     </section>
 
@@ -245,11 +249,14 @@
             </div>
           </div>
         </div>
-        <div class="card"><h2>Rule of thumb</h2><p class="hint">Aim for 3–6 months of expenses as an emergency buffer.</p></div>
+        <div class="card">
+          <h2>—</h2>
+          <p class="hint">(Optional: add a simple bar to show increasing monthly saving targets over time.)</p>
+        </div>
       </div>
     </section>
 
-    <!-- SPENDING PAGE -->
+    <!-- SPENDING PAGE + donut chart -->
     <section id="spending" class="page">
       <div class="split">
         <div>
@@ -263,11 +270,15 @@
             </div>
           </div>
         </div>
-        <div class="card"><h2>Tip</h2><p class="hint">Automate savings day-after-payday so the free-to-spend number is real.</p></div>
+        <div class="card">
+          <h2>Monthly budget split</h2>
+          <div class="chart"><svg id="chartSpending" viewBox="0 0 400 240" width="100%" height="100%" role="img" aria-label="Spending donut"></svg></div>
+          <div class="legend"><span><i class="dot c-exp"></i>Expenses</span><span><i class="dot c-sav"></i>Savings</span><span><i class="dot c-free"></i>Free</span></div>
+        </div>
       </div>
     </section>
 
-    <!-- OVERVIEW PAGE -->
+    <!-- OVERVIEW PAGE + goal timeline chart -->
     <section id="overview" class="page">
       <div class="split">
         <div>
@@ -299,7 +310,10 @@
             </div>
           </div>
         </div>
-        <div class="card"><h2>Note</h2><p class="hint">Numbers update when you click Calculate in each section. Tweak and recalc as needed.</p></div>
+        <div class="card">
+          <h2>Goal timeline</h2>
+          <div class="chart"><svg id="chartGoal" viewBox="0 0 400 240" width="100%" height="100%" role="img" aria-label="Goal timeline"></svg></div>
+        </div>
       </div>
     </section>
 
@@ -309,100 +323,102 @@
   <script>
     document.addEventListener('DOMContentLoaded', function(){
       const fmt = n => Number(n||0).toLocaleString(undefined,{style:'currency',currency:'EUR',maximumFractionDigits:0});
-
-      // ------- Shared state -------
       const state = { annualGross:0, netAnnual:0, totalTax:0, expensesAnnual:0, saveRate:0.20 };
 
-      // ------- Salary -------
+      // helpers
+      function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+      function pathArc(cx,cy,r,start,end){ // returns arc path for donut segment
+        const a0=(start-90)*Math.PI/180, a1=(end-90)*Math.PI/180;
+        const x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0);
+        const x1=cx+r*Math.cos(a1), y1=cy*r*Math.sin(a1);
+        const large = (end-start)>180 ? 1:0; return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`; }
+
+      // ========== Salary ==========
       const freqEl = document.getElementById('freq');
       const amountEl = document.getElementById('amount');
       const hoursRow = document.getElementById('hoursRow');
       const hoursEl = document.getElementById('hours');
-      const dbgSalary = document.getElementById('dbgSalary');
-      function showDbg(m){ dbgSalary.style.display='block'; dbgSalary.textContent=m; }
       freqEl.addEventListener('change', ()=>{ hoursRow.style.display = freqEl.value==='hourly' ? '' : 'none'; });
       document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{freqEl.value='annual';amountEl.value=b.getAttribute('data-preset');hoursRow.style.display='none';}));
       document.getElementById('presetFT').addEventListener('click',()=>{hoursEl.value=39});
-      function toAnnual(freq, amount, hours){
-        const v = Number(amount||0);
-        switch(freq){case 'annual': return v; case 'monthly': return v*12; case 'biweekly': return v*26; case 'weekly': return v*52; case 'hourly': return v*Number(hours||0)*52; default: return 0;}
-      }
-      function fillSalary(a){
-        document.getElementById('salAnnual').textContent = fmt(a);
-        document.getElementById('salMonthly').textContent = fmt(a/12);
-        document.getElementById('salBiweekly').textContent = fmt(a/26);
-        document.getElementById('salWeekly').textContent = fmt(a/52);
-      }
-      document.getElementById('calcSalary').addEventListener('click', ()=>{
-        const a = toAnnual(freqEl.value, amountEl.value, hoursEl.value);
-        state.annualGross = a; fillSalary(a); showDbg('Salary calculated');
-      });
+      function toAnnual(freq, amount, hours){ const v = Number(amount||0); switch(freq){case 'annual': return v; case 'monthly': return v*12; case 'biweekly': return v*26; case 'weekly': return v*52; case 'hourly': return v*Number(hours||0)*52; default: return 0;} }
+      function fillSalary(a){ document.getElementById('salAnnual').textContent = fmt(a); document.getElementById('salMonthly').textContent = fmt(a/12); document.getElementById('salBiweekly').textContent = fmt(a/26); document.getElementById('salWeekly').textContent = fmt(a/52); }
+      document.getElementById('calcSalary').addEventListener('click', ()=>{ const a = toAnnual(freqEl.value, amountEl.value, hoursEl.value); state.annualGross = a; fillSalary(a); updateAllCharts(); });
 
-      // ------- Pension -------
+      // ========== Pension ==========
       function fvSeries(monthly, years, annualReturn){ const r = (annualReturn/100)/12; const n = years*12; if(r===0) return monthly*n; return monthly*((Math.pow(1+r,n)-1)/r); }
-      document.getElementById('calcPension').addEventListener('click', ()=>{
-        const ee = Number(document.getElementById('eePct').value||0)/100 * state.annualGross;
-        const er = Number(document.getElementById('erPct').value||0)/100 * state.annualGross;
-        const monthly = (ee+er)/12;
-        const fv = fvSeries(monthly, Number(document.getElementById('penYears').value||0), Number(document.getElementById('retPct').value||0));
-        document.getElementById('penEE').textContent = fmt(ee);
-        document.getElementById('penER').textContent = fmt(er);
-        document.getElementById('penMonthly').textContent = fmt(monthly);
-        document.getElementById('penPot').textContent = fmt(fv);
-      });
+      function renderPensionChart(monthly, years, annualReturn){ const svg=document.getElementById('chartPension'); svg.innerHTML=''; const w=400,h=240,p=28; const r=(annualReturn/100)/12; const n=years*12; const step=Math.max(1, Math.floor(n/48)); // up to 48 points
+        let vals=[]; let bal=0; for(let m=1;m<=n;m++){ bal = bal*(1+r) + monthly; if(m%step===0||m===n) vals.push(bal); }
+        const max=Math.max(1, ...vals);
+        const sx = (w-2*p)/ (vals.length-1 || 1); const sy = (h-2*p)/max; let d=''; vals.forEach((v,i)=>{ const x=p + i*sx; const y=h-p - v*sy; d += (i? ' L ':'M ')+x+' '+y; });
+        svg.innerHTML = `<path d="${d}" fill="none" stroke="#7c5cff" stroke-width="3"/>`;
+      }
+      document.getElementById('calcPension').addEventListener('click', ()=>{ const ee = Number(document.getElementById('eePct').value||0)/100 * state.annualGross; const er = Number(document.getElementById('erPct').value||0)/100 * state.annualGross; const monthly = (ee+er)/12; const years=Number(document.getElementById('penYears').value||0); const ret=Number(document.getElementById('retPct').value||0); const fv=fvSeries(monthly, years, ret); document.getElementById('penEE').textContent = fmt(ee); document.getElementById('penER').textContent = fmt(er); document.getElementById('penMonthly').textContent = fmt(monthly); document.getElementById('penPot').textContent = fmt(fv); renderPensionChart(monthly, years, ret); });
 
-      // ------- Tax (Ireland 2025) -------
+      // ========== Tax ==========
       const TAX = { standard:0.20, higher:0.40, bands:{single:44000,married_one:53000,married_two:88000,single_parent:49000}, usc:[{upTo:12012,rate:0.005},{upTo:27382,rate:0.02},{upTo:70044,rate:0.03},{upTo:Infinity,rate:0.08}], prsi:{weeklyNil:352, creditStart:352.01, creditEnd:424, creditMax:12, rate1:0.041, rate2:0.042, weeks1:39, weeks2:13} };
       function calcPAYE(annual, totalCredits){ const band=TAX.bands[document.getElementById('status').value]||TAX.bands.single; const at20=Math.min(annual,band); const at40=Math.max(0,annual-band); let t=at20*TAX.standard+at40*TAX.higher; t -= Number(totalCredits||0); return Math.max(0,t); }
       function calcUSC(annual){ if(annual<13000) return 0; let rem=annual, last=0, u=0; for(const b of TAX.usc){ const cap=Math.min(rem,b.upTo-last); if(cap>0){u+=cap*b.rate; rem-=cap; last=b.upTo;} if(rem<=0) break;} return u; }
       function weeklyPRSI(weekly,isAfter){ if(weekly<=TAX.prsi.weeklyNil) return 0; const rate=isAfter?TAX.prsi.rate2:TAX.prsi.rate1; let ch=weekly*rate; if(weekly>TAX.prsi.creditStart && weekly<=TAX.prsi.creditEnd){ const p=(TAX.prsi.creditEnd-weekly)/(TAX.prsi.creditEnd-TAX.prsi.creditStart); ch=Math.max(0, ch - TAX.prsi.creditMax*p);} return ch; }
       function calcPRSI(annual){ const w=annual/52; return weeklyPRSI(w,false)*TAX.prsi.weeks1 + weeklyPRSI(w,true)*TAX.prsi.weeks2; }
-      document.getElementById('calcTax').addEventListener('click', ()=>{
-        const a = state.annualGross || 0; document.getElementById('taxUsingGross').textContent = fmt(a);
-        const baseCredits = Number(document.getElementById('credits').value||0);
-        const rentCredit = Number(document.getElementById('rentCredit').value||0); // user-entered rent credit amount
-        const medicalEligible = Number(document.getElementById('medicalEligible').value||0);
-        const medicalRelief = medicalEligible * 0.20; // 20% relief approximation
-        const totalCredits = baseCredits + rentCredit + medicalRelief;
-        const paye=calcPAYE(a, totalCredits); const usc=calcUSC(a); const prsi=calcPRSI(a); const total=paye+usc+prsi; const net=Math.max(0,a-total);
-        state.totalTax = total; state.netAnnual = net;
-        document.getElementById('outPAYE').textContent=fmt(paye); document.getElementById('outUSC').textContent=fmt(usc); document.getElementById('outPRSI').textContent=fmt(prsi); document.getElementById('outTax').textContent=fmt(total);
-        document.getElementById('netAnnual').textContent=fmt(net); document.getElementById('netMonthly').textContent=fmt(net/12);
-        syncSpending(); syncOverview();
-      });
+      function renderTaxWaterfall(gross,paye,usc,prsi,net){ const svg=document.getElementById('chartTax'); svg.innerHTML=''; const w=400,h=240,p=30; const labels=['Gross','PAYE','USC','PRSI','Net']; const vals=[gross,-paye,-usc,-prsi,net]; const max=Math.max(gross, paye+usc+prsi); const sx=(w-2*p)/labels.length; const sy=(h-2*p)/max; let x=p; let cur=gross; // start at top
+        // bars
+        function rect(x,y,wid,ht,cls){ return `<rect x="${x}" y="${y}" width="${wid}" height="${ht}" rx="6" class="${cls}"/>`; }
+        let out='';
+        // gross
+        out+=rect(x, h-p - gross*sy, 40, gross*sy, 'c-gross');
+        // deductions as negatives
+        const colors=['c-paye','c-usc','c-prsi'];
+        let startY = h-p - cur*sy;
+        [paye,usc,prsi].forEach((d,i)=>{ const dh=d*sy; out+=rect(x+sx*(i+1), startY, 40, dh, colors[i]); startY += dh; cur -= d; });
+        // net
+        out+=rect(x+sx*4, h-p - net*sy, 40, net*sy, 'c-net');
+        // axes labels
+        svg.innerHTML = out;
+      }
+      document.getElementById('calcTax').addEventListener('click', ()=>{ const a = state.annualGross || 0; document.getElementById('taxUsingGross').textContent = fmt(a); const baseCredits = Number(document.getElementById('credits').value||0); const rentCredit = Number(document.getElementById('rentCredit').value||0); const medicalEligible = Number(document.getElementById('medicalEligible').value||0); const medicalRelief = medicalEligible * 0.20; const totalCredits = baseCredits + rentCredit + medicalRelief; const paye=calcPAYE(a, totalCredits); const usc=calcUSC(a); const prsi=calcPRSI(a); const total=paye+usc+prsi; const net=Math.max(0,a-total); state.totalTax = total; state.netAnnual = net; document.getElementById('outPAYE').textContent=fmt(paye); document.getElementById('outUSC').textContent=fmt(usc); document.getElementById('outPRSI').textContent=fmt(prsi); document.getElementById('outTax').textContent=fmt(total); document.getElementById('netAnnual').textContent=fmt(net); document.getElementById('netMonthly').textContent=fmt(net/12); renderTaxWaterfall(a,paye,usc,prsi,net); updateAllCharts(); });
 
-      // ------- Expenses -------
+      // ========== Expenses ==========
       const tbody = document.querySelector('#expTable tbody');
       const expenses = [];
       function expAnnual(amount,freq){ const v=Number(amount||0); if(freq==='weekly') return v*52; if(freq==='monthly') return v*12; return v; }
-      function renderExp(){ tbody.innerHTML=''; let total=0; expenses.forEach((e,i)=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td><input data-i="${i}" data-k="name" value="${e.name}"></td>
+      function renderExp(){ tbody.innerHTML=''; let total=0; const cats=[]; expenses.forEach((e,i)=>{ const ann=expAnnual(e.amount,e.freq); cats.push({name:e.name||'—', val:ann}); const tr=document.createElement('tr'); tr.innerHTML=`<td><input data-i="${i}" data-k="name" value="${e.name}"></td>
         <td><input type="number" step="0.01" min="0" data-i="${i}" data-k="amount" value="${e.amount}"></td>
         <td><select data-i="${i}" data-k="freq"><option value="monthly" ${e.freq==='monthly'?'selected':''}>Monthly</option><option value="weekly" ${e.freq==='weekly'?'selected':''}>Weekly</option><option value="annual" ${e.freq==='annual'?'selected':''}>Annual</option></select></td>
-        <td class="mono">${fmt(expAnnual(e.amount,e.freq))}</td>
-        <td><button class="ghost" data-remove="${i}">✕</button></td>`; tbody.appendChild(tr); total+=expAnnual(e.amount,e.freq); });
-        document.getElementById('expTotal').textContent=fmt(total); document.getElementById('expTotalMonthly').textContent=fmt(total/12); return total; }
+        <td class="mono">${fmt(ann)}</td>
+        <td><button class="ghost" data-remove="${i}">✕</button></td>`; tbody.appendChild(tr); total+=ann; });
+        document.getElementById('expTotal').textContent=fmt(total); document.getElementById('expTotalMonthly').textContent=fmt(total/12); renderExpensesBars(cats); return total; }
+      function renderExpensesBars(items){ const svg=document.getElementById('chartExpenses'); svg.innerHTML=''; const w=400,h=240,p=24; const sorted=items.filter(i=>i.val>0).sort((a,b)=>b.val-a.val).slice(0,6); const max=Math.max(1, ...sorted.map(i=>i.val)); const barH=(h-2*p)/(sorted.length||1)-6; let y=p; sorted.forEach((it)=>{ const wid=(w-2*p)* (it.val/max); const rect=`<rect x="${p}" y="${y}" width="${wid}" height="${barH}" rx="6" fill="#7c5cff"/>`; const label=`<text x="${p+4}" y="${y+barH-6}" fill="#e5e7eb" font-size="12">${it.name} — ${fmt(it.val/12)}/mo</text>`; svg.innerHTML += rect+label; y += barH+6; }); }
       document.getElementById('addExp').addEventListener('click',()=>{ expenses.push({name:'',amount:0,freq:'monthly'}); renderExp(); });
       document.getElementById('clearExp').addEventListener('click',()=>{ expenses.length=0; renderExp(); });
       tbody.addEventListener('input',e=>{ const i=e.target.getAttribute('data-i'); const k=e.target.getAttribute('data-k'); if(i!==null){ expenses[i][k]= k==='amount'? Number(e.target.value||0): e.target.value; }});
       tbody.addEventListener('click',e=>{ const i=e.target.getAttribute('data-remove'); if(i!==null){ expenses.splice(i,1); renderExp(); }});
-      document.getElementById('calcExp').addEventListener('click',()=>{ state.expensesAnnual = renderExp(); syncSpending(); syncOverview(); });
+      document.getElementById('calcExp').addEventListener('click',()=>{ state.expensesAnnual = renderExp(); updateAllCharts(); });
       expenses.push({name:'Rent',amount:0,freq:'monthly'},{name:'Utilities',amount:0,freq:'monthly'},{name:'Transport',amount:0,freq:'monthly'}); renderExp();
 
-      // ------- Savings -------
-      document.getElementById('calcSave').addEventListener('click',()=>{ const rate=Number(document.getElementById('saveRate').value||0)/100; state.saveRate=rate; const mo=(state.netAnnual/12)*rate; document.getElementById('saveMonthly').textContent=fmt(mo); document.getElementById('saveAnnual').textContent=fmt(mo*12); syncSpending(); syncOverview(); });
+      // ========== Savings ==========
+      document.getElementById('calcSave').addEventListener('click',()=>{ const rate=Number(document.getElementById('saveRate').value||0)/100; state.saveRate=rate; const mo=(state.netAnnual/12)*rate; document.getElementById('saveMonthly').textContent=fmt(mo); document.getElementById('saveAnnual').textContent=fmt(mo*12); updateAllCharts(); });
 
-      // ------- Spending snapshot -------
-      function syncSpending(){ const netMo = state.netAnnual/12; const expMo = (state.expensesAnnual||0)/12; const saveMo = netMo*(state.saveRate||0); const freeMo = Math.max(0, netMo - expMo - saveMo); document.getElementById('spNetMonthly').textContent=fmt(netMo); document.getElementById('spExpMonthly').textContent=fmt(expMo); document.getElementById('spFreeMonthly').textContent=fmt(freeMo); }
+      // ========== Spending (donut) ==========
+      function renderSpendingDonut(){ const svg=document.getElementById('chartSpending'); svg.innerHTML=''; const w=400,h=240,cx=200,cy=120,r=84; const netMo=state.netAnnual/12; const expMo=(state.expensesAnnual||0)/12; const savMo=netMo*(state.saveRate||0); const freeMo=Math.max(0, netMo-expMo-savMo); const total=Math.max(1, netMo); const segs=[{v:expMo,cls:'c-exp'},{v:savMo,cls:'c-sav'},{v:freeMo,cls:'c-free'}]; let start=0; segs.forEach(s=>{ const deg = 360*(s.v/total); const path = pathArc(cx,cy,r,start,start+deg); svg.innerHTML += `<path d="${path}" class="${s.cls}" fill="currentColor"/>`; start+=deg; }); svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="58" fill="#0c1219" stroke="#1f2b3d"/>`; const pct = clamp((freeMo/total)*100,0,100).toFixed(0); svg.innerHTML += `<text x="${cx}" y="${cy-6}" text-anchor="middle" fill="#e5e7eb" font-size="20" font-weight="700">${pct}% free</text>`; svg.innerHTML += `<text x="${cx}" y="${cy+18}" text-anchor="middle" fill="#9fb0c5" font-size="12">${fmt(freeMo)}/mo</text>`; document.getElementById('spNetMonthly').textContent=fmt(netMo); document.getElementById('spExpMonthly').textContent=fmt(expMo); document.getElementById('spFreeMonthly').textContent=fmt(freeMo); }
 
-      // ------- Overview -------
+      // ========== Overview (goal timeline) ==========
+      function renderGoalTimeline(){ const svg=document.getElementById('chartGoal'); svg.innerHTML=''; const w=400,h=240,p=28; const goal=Number(document.getElementById('goalAmount').value||0); const cur=Number(document.getElementById('goalCurrent').value||0); const mo=Number(document.getElementById('goalMonthly').value||0); if(goal<=0||mo<=0||cur>=goal){ return; } const months=Math.ceil((goal-cur)/mo); const vals=[]; for(let i=0;i<=months;i++){ vals.push(Math.min(goal, cur + i*mo)); } const max=goal; const sx=(w-2*p)/(vals.length-1||1); const sy=(h-2*p)/max; let d=''; vals.forEach((v,i)=>{ const x=p + i*sx; const y=h-p - v*sy; d += (i? ' L ':'M ')+x+' '+y; }); svg.innerHTML = `<path d="${d}" fill="none" stroke="#22c55e" stroke-width="3"/>`; }
+
+      // ========== Overview numbers ==========
       function syncOverview(){ const netMo=state.netAnnual/12; const expMo=(state.expensesAnnual||0)/12; const saveMo=netMo*(state.saveRate||0); const freeYr=Math.max(0, state.netAnnual - (state.expensesAnnual||0)); const runway = expMo>0 ? (freeYr/expMo) : 0; document.getElementById('ovGross').textContent=fmt(state.annualGross); document.getElementById('ovTax').textContent=fmt(state.totalTax); document.getElementById('ovNet').textContent=fmt(state.netAnnual); document.getElementById('ovExp').textContent=fmt(state.expensesAnnual||0); document.getElementById('ovFree').textContent=fmt(freeYr); document.getElementById('ovSaveMo').textContent=fmt(saveMo); document.getElementById('ovRunway').textContent= runway? runway.toFixed(1): '—'; }
-      ['calcSalary','calcTax','calcExp','calcSave'].forEach(id=>{ document.getElementById(id).addEventListener('click', syncOverview); });
+      function updateAllCharts(){ renderSpendingDonut(); renderGoalTimeline(); syncOverview(); }
 
-      function addMonths(d, m){ const dt=new Date(d.getTime()); dt.setMonth(dt.getMonth()+m); return dt; }
-      document.getElementById('calcGoal').addEventListener('click',()=>{ const goal=Number(document.getElementById('goalAmount').value||0); const cur=Number(document.getElementById('goalCurrent').value||0); const mo=Number(document.getElementById('goalMonthly').value||0); if(mo<=0 || goal<=cur){ document.getElementById('goalMonths').textContent='—'; document.getElementById('goalDate').textContent='—'; return; } const months=Math.ceil((goal-cur)/mo); const target=addMonths(new Date(), months); document.getElementById('goalMonths').textContent=months; document.getElementById('goalDate').textContent=target.toLocaleDateString(); });
+      // ===== Bindings =====
+      ['calcSalary','calcTax','calcExp','calcSave','calcGoal'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.addEventListener('click', updateAllCharts); }});
+      document.getElementById('calcExp').addEventListener('click',()=>{ /* already updates totals */ });
+      document.getElementById('calcGoal').addEventListener('click',()=>{ const goal=Number(document.getElementById('goalAmount').value||0); const cur=Number(document.getElementById('goalCurrent').value||0); const mo=Number(document.getElementById('goalMonthly').value||0); if(mo<=0 || goal<=cur){ document.getElementById('goalMonths').textContent='—'; document.getElementById('goalDate').textContent='—'; return; } const months=Math.ceil((goal-cur)/mo); const target=new Date(); target.setMonth(target.getMonth()+months); document.getElementById('goalMonths').textContent=months; document.getElementById('goalDate').textContent=target.toLocaleDateString(); });
 
-      // set an initial baseline
-      fillSalary(0); syncSpending(); syncOverview();
+      // initial
+      function init(){ // seed expense rows
+        updateAllCharts();
+      }
+      init();
     });
   </script>
 </body>
