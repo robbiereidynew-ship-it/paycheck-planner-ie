@@ -3,239 +3,310 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Irish Money Planner — v4.6</title>
+  <title>PaycheckPlanner IE</title>
   <style>
-    :root{--bg:#0b0f14;--ink:#e6edf3;--muted:#9fb0c5;--card:#101722;--line:#223044;--accent:#7c5cff;--accent2:#22c55e;--warn:#f59e0b}
+    :root{--bg:#0b0f14;--ink:#e6edf3;--muted:#9fb0c5;--card:#0f1520;--line:#223044;--accent:#7c5cff;--accent2:#22c55e;--note:#94a3b8;--warn:#f59e0b}
     *{box-sizing:border-box}
-    body{margin:0;font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto;color:var(--ink);background:radial-gradient(1200px 900px at 85% -20%,#1a2230 15%,transparent 60%) var(--bg)}
-    header{position:sticky;top:0;z-index:50;background:#0b0f1490;backdrop-filter:blur(8px) saturate(160%);border-bottom:1px solid #141d2a}
-    .nav{max-width:1200px;margin:auto;display:flex;gap:16px;align-items:center;padding:10px 16px}
+    body{margin:0;font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto;color:var(--ink);background:
+      radial-gradient(1200px 700px at 85% -20%, #1a2332 20%, transparent 60%),
+      radial-gradient(1200px 600px at -10% 110%, #172235 10%, transparent 60%),
+      #0b0f14 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320"><g fill="none" stroke="%23223444" stroke-width="0.7" opacity="0.35"><path d="M0 64h320M0 128h320M0 192h320M0 256h320"/><path d="M64 0v320M128 0v320M192 0v320M256 0v320"/></g><g fill="%23131a26" opacity="0.55"><circle cx="34" cy="290" r="10"/><circle cx="290" cy="34" r="10"/></g></svg>') repeat}
+    header{position:sticky;top:0;z-index:50;background:#0c132090;backdrop-filter:blur(8px) saturate(160%);border-bottom:1px solid #141d2a}
+    .nav{max-width:1120px;margin:auto;display:flex;gap:14px;align-items:center;padding:10px 14px}
     .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .brand svg{filter:drop-shadow(0 6px 18px #0006)}
     .spacer{flex:1}
-    .nav a{color:#cbd5e1;padding:8px 10px;border-radius:10px;text-decoration:none}
+    .nav a{color:#cbd5e1;text-decoration:none;padding:6px 10px;border-radius:10px}
     .nav a:hover{background:#0e1622}
-    main{max-width:1100px;margin:0 auto}
-    section.page{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:32px 16px;scroll-margin-top:76px}
-    .card{background:linear-gradient(180deg,#101722,#0f141b);border:1px solid var(--line);border-radius:18px;padding:18px}
-    h1{margin:0 0 10px;font-size:2rem}
-    h2{margin:0 0 8px;font-size:1.25rem}
-    .hint{color:var(--muted)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-    input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid #213144;background:#0c1219;color:var(--ink)}
-    .primary{background:linear-gradient(180deg,var(--accent),#6a4bf6);border:none;cursor:pointer}
-    .ghost{background:#0f172a;cursor:pointer}
-    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
-    .kpi{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#0c1219;border:1px solid var(--line);border-radius:12px}
+
+    .hero{border-bottom:1px solid #141d2a;background:
+      conic-gradient(from 210deg at 82% -42%, #23185a 0deg, #121a2b 90deg, #0f1420 180deg, #23185a 360deg)}
+    .hero-inner{max-width:1120px;margin:0 auto;padding:18px 14px 22px;display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:center}
+    .hero h1{margin:0 0 4px;font-size:1.65rem}
+    .hero p{margin:0;color:var(--muted)}
+    .flare{position:relative;height:150px}
+    .flare .card{position:absolute;border:1px solid #2a3950;background:#0f1729;border-radius:16px;box-shadow:0 10px 36px #0006;padding:10px}
+    .flare .c1{right:0;top:-6px;transform:rotate(-2deg)}
+    .flare .c2{left:6%;bottom:-18px;transform:rotate(3deg)}
+
+    main{max-width:1120px;margin:10px auto 52px;padding:0 14px}
+    section.page{min-height:86vh;display:flex;flex-direction:column;justify-content:center;padding:18px 0;scroll-margin-top:76px}
+    .split{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+
+    .card{background:linear-gradient(180deg,var(--card),#0d121a);border:1px solid var(--line);border-radius:16px;padding:14px}
+    h1{margin:0 0 8px;font-size:1.55rem}
+    h2{margin:0 0 8px;font-size:1.15rem}
+    .hint{color:var(--muted);font-size:.92rem;margin-bottom:6px}
+
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    label{display:block;font-size:.88rem;color:#a7b4c7;margin:4px 0}
+    input,select,button{width:100%;padding:10px;border-radius:12px;border:1px solid #213144;background:#0c1219;color:var(--ink)}
+    input:focus,select:focus{outline:none;box-shadow:0 0 0 2px var(--accent)}
+    button{cursor:pointer}
+    .primary{background:linear-gradient(180deg,var(--accent),#6a4bf6);border:none}
+    .ghost{background:#111a2a}
+
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+    .kpi{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#0c1219;border:1px solid var(--line);border-radius:12px}
     .mono{font-variant-numeric:tabular-nums}
-    .split{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
-    .chart{background:#0c1219;border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;align-items:center;justify-content:center;min-height:260px}
-    .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+
+    .chart{background:#0c1219;border:1px solid var(--line);border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center;min-height:240px}
+    .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+    .legend span{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;color:#c8d3e1}
     .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px dashed #2a3a50}
+
+    .footer{opacity:.75;text-align:center;padding:20px 0}
   </style>
 </head>
 <body>
-<header>
-  <div class="nav">
-    <div class="brand">
-      <svg width="28" height="28" viewBox="0 0 48 48"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs><rect x="6" y="6" width="36" height="36" rx="10" fill="url(#g)"/></svg>
-      <span>Irish Money Planner — v4.6</span>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs><rect x="6" y="6" width="36" height="36" rx="10" fill="url(#g)"/></svg>
+        <span>PaycheckPlanner IE</span>
+      </div>
+      <div class="spacer"></div>
+      <a href="#salary">Salary</a>
+      <a href="#pension">Pension</a>
+      <a href="#tax">Tax</a>
+      <a href="#expenses">Expenses</a>
+      <a href="#goals">Goals</a>
+      <a href="#overview">Overview</a>
     </div>
-    <div class="spacer"></div>
-    <a href="#salary">Salary</a>
-    <a href="#pension">Pension</a>
-    <a href="#tax">Tax</a>
-    <a href="#expenses">Expenses</a>
-    <a href="#goals">Goals</a>
-    <a href="#overview">Overview</a>
-  </div>
-</header>
+    <div class="hero">
+      <div class="hero-inner">
+        <div>
+          <h1>Plan your Irish paycheck with clarity</h1>
+          <p>Compact, Revolut‑style planner for Ireland: salary → pension → tax → expenses → goals → overview. Charts are labelled and colour‑coded; nothing leaves your browser.</p>
+        </div>
+        <div class="flare" aria-hidden="true">
+          <div class="card c1">
+            <svg width="240" height="140" viewBox="0 0 240 140" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="8" rx="14" ry="14" width="224" height="124" fill="#0e1726" stroke="#2a3650"/>
+              <rect x="18" y="30" width="204" height="14" fill="#7c5cff" opacity="0.6"/>
+              <g transform="translate(26,64)">
+                <circle cx="0" cy="0" r="6" fill="#22c55e"/>
+                <circle cx="18" cy="0" r="6" fill="#7c5cff"/>
+                <circle cx="36" cy="0" r="6" fill="#f59e0b"/>
+              </g>
+            </svg>
+          </div>
+          <div class="card c2">
+            <svg width="220" height="150" viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="8" rx="14" ry="14" width="204" height="134" fill="#0e1726" stroke="#2a3650"/>
+              <g transform="translate(22,24)">
+                <rect x="0" y="74" width="20" height="46" fill="#425476"/>
+                <rect x="28" y="60" width="20" height="60" fill="#576a8e"/>
+                <rect x="56" y="42" width="20" height="78" fill="#6a7da2"/>
+                <rect x="84" y="20" width="20" height="100" fill="#7c8db4"/>
+                <polyline fill="none" stroke="#7c5cff" stroke-width="3" points="0,80 38,66 74,44 112,26"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-<main>
-  <!-- SALARY -->
-  <section id="salary" class="page">
-    <div class="split">
-      <div>
-        <h1>Salary</h1>
-        <p class="hint">Choose frequency, enter amount, then click Calculate.</p>
-        <div class="card">
-          <div class="row">
-            <div>
-              <label>Input frequency</label>
-              <select id="freq">
-                <option value="annual">Annual</option>
-                <option value="monthly">Monthly</option>
-                <option value="biweekly">Bi‑weekly (26)</option>
-                <option value="weekly">Weekly (52)</option>
-                <option value="hourly">Hourly</option>
-              </select>
+  <main>
+    <!-- SALARY -->
+    <section id="salary" class="page">
+      <div class="split">
+        <div>
+          <h1>Salary</h1>
+          <p class="hint">Pick your frequency, enter the amount, then click <strong>Calculate</strong>. Hourly supports hours/week.</p>
+          <div class="card">
+            <div class="row">
+              <div><label>Input frequency</label><select id="freq"><option value="annual">Annual</option><option value="monthly">Monthly</option><option value="biweekly">Bi‑weekly (26)</option><option value="weekly">Weekly (52)</option><option value="hourly">Hourly</option></select></div>
+              <div><label>Amount</label><input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 45000"/></div>
             </div>
-            <div>
-              <label>Amount</label>
-              <input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 45000" />
+            <div class="row" id="hoursRow" style="display:none;margin-top:6px"><div><label>Hours per week</label><input id="hours" type="number" min="0" step="0.1" value="39"/></div><div><label>&nbsp;</label><button id="presetFT" class="ghost" type="button">Set 39h / wk</button></div></div>
+            <div class="row" style="margin-top:8px">
+              <div><button id="calcSalary" class="primary" type="button">Calculate</button></div>
+              <div class="row" style="grid-template-columns:repeat(3,1fr);gap:6px"><button type="button" class="ghost" data-preset="30000">€30k</button><button type="button" class="ghost" data-preset="45000">€45k</button><button type="button" class="ghost" data-preset="60000">€60k</button></div>
             </div>
+            <div class="kpis"><div class="kpi"><span>Annual</span><strong class="mono" id="salAnnual">€0</strong></div><div class="kpi"><span>Monthly</span><strong class="mono" id="salMonthly">€0</strong></div><div class="kpi"><span>Bi‑weekly</span><strong class="mono" id="salBiweekly">€0</strong></div><div class="kpi"><span>Weekly</span><strong class="mono" id="salWeekly">€0</strong></div></div>
           </div>
-          <div class="row" id="hoursRow" style="display:none;margin-top:10px"><div><label>Hours per week</label><input id="hours" type="number" min="0" step="0.1" value="39"/></div><div><label>&nbsp;</label><button id="presetFT" class="ghost" type="button">Set 39h / wk</button></div></div>
-          <div class="row" style="margin-top:12px">
-            <div><button id="calcSalary" class="primary" type="button">Calculate</button></div>
-            <div class="row" style="grid-template-columns:repeat(3,1fr);gap:8px">
-              <button type="button" class="ghost" data-preset="30000">Preset €30k</button>
-              <button type="button" class="ghost" data-preset="45000">Preset €45k</button>
-              <button type="button" class="ghost" data-preset="60000">Preset €60k</button>
+        </div>
+        <div class="card"><h2>Notes</h2><p class="hint">This feeds tax, pension, expenses and the final overview.</p></div>
+      </div>
+    </section>
+
+    <!-- PENSION -->
+    <section id="pension" class="page">
+      <div class="split">
+        <div>
+          <h1>Pension contributions</h1>
+          <p class="hint">Your % (EE) is included as its own slice in the final overview. Add match, return & years to see growth.</p>
+          <div class="card">
+            <div class="row3">
+              <div><label>Your % of gross</label><input id="eePct" type="number" min="0" max="100" step="0.1" value="5"></div>
+              <div><label>Employer match %</label><input id="erPct" type="number" min="0" max="100" step="0.1" value="5"></div>
+              <div><label>Assumed return % (annual)</label><input id="retPct" type="number" min="-10" max="20" step="0.1" value="5"></div>
             </div>
-          </div>
-          <div class="kpis">
-            <div class="kpi"><span>Annual</span><strong class="mono" id="salAnnual">€0</strong></div>
-            <div class="kpi"><span>Monthly</span><strong class="mono" id="salMonthly">€0</strong></div>
-            <div class="kpi"><span>Bi‑weekly</span><strong class="mono" id="salBiweekly">€0</strong></div>
-            <div class="kpi"><span>Weekly</span><strong class="mono" id="salWeekly">€0</strong></div>
+            <div class="row" style="margin-top:8px"><div><label>Years</label><input id="penYears" type="number" min="1" max="60" step="1" value="40"></div><div><label>&nbsp;</label><button id="calcPension" class="primary" type="button">Calculate</button></div></div>
+            <div class="kpis"><div class="kpi"><span>Employee €/yr</span><strong class="mono" id="penEE">€0</strong></div><div class="kpi"><span>Employer €/yr</span><strong class="mono" id="penER">€0</strong></div><div class="kpi"><span>Monthly total</span><strong class="mono" id="penMonthly">€0</strong></div><div class="kpi"><span>Projected pot</span><strong class="mono" id="penPot">€0</strong></div></div>
           </div>
         </div>
-      </div>
-      <div class="card"><h2>Why this matters</h2><p class="hint">Every later section uses this number.</p></div>
-    </div>
-  </section>
-
-  <!-- PENSION -->
-  <section id="pension" class="page">
-    <div class="split">
-      <div>
-        <h1>Pension</h1>
         <div class="card">
-          <div class="row3">
-            <div><label>Your % of gross</label><input id="eePct" type="number" min="0" max="100" step="0.1" value="5"></div>
-            <div><label>Employer match %</label><input id="erPct" type="number" min="0" max="100" step="0.1" value="5"></div>
-            <div><label>Assumed return %</label><input id="retPct" type="number" min="-10" max="20" step="0.1" value="5"></div>
+          <h2>Growth over time</h2>
+          <div class="chart"><svg id="chartPension" viewBox="0 0 440 240" width="100%" height="100%"></svg></div>
+          <div class="legend" id="legendPen"><span><i class="dot" style="background:var(--accent)"></i>Projected balance (€)</span><span>↔ Years</span><span>↕ Amount (€)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAX -->
+    <section id="tax" class="page">
+      <div class="split">
+        <div>
+          <h1>Tax (Ireland 2025)</h1>
+          <p class="hint">PAYE + USC + PRSI. Uses your Salary from page 1. Rent & medical reliefs reduce PAYE via credits.</p>
+          <div class="card">
+            <div class="row3">
+              <div><label>Status</label><select id="status"><option value="single" selected>Single</option><option value="married_one">Married (one income)</option><option value="married_two">Married (both incomes)</option><option value="single_parent">Single parent</option></select></div>
+              <div><label>Base tax credits €/yr</label><input id="credits" type="number" min="0" step="1" value="4000"></div>
+              <div><label>Rent tax credit €/yr</label><input id="rentCredit" type="number" min="0" step="1" value="0"></div>
+            </div>
+            <div class="row3" style="margin-top:8px"><div><label>Medical expenses eligible (€)</label><input id="medicalEligible" type="number" min="0" step="1" value="0"></div><div><label>&nbsp;</label><button id="calcTax" class="primary" type="button">Calculate</button></div><div><label>&nbsp;</label><div class="kpi"><span>Using gross</span><strong class="mono" id="taxUsingGross">€0</strong></div></div></div>
+            <div class="kpis"><div class="kpi"><span>PAYE</span><strong class="mono" id="outPAYE">€0</strong></div><div class="kpi"><span>USC</span><strong class="mono" id="outUSC">€0</strong></div><div class="kpi"><span>PRSI</span><strong class="mono" id="outPRSI">€0</strong></div><div class="kpi"><span>Total tax</span><strong class="mono" id="outTax">€0</strong></div></div>
+            <div class="kpis" style="grid-template-columns:repeat(2,1fr)"><div class="kpi"><span>Net annual</span><strong class="mono" id="netAnnual">€0</strong></div><div class="kpi"><span>Net monthly</span><strong class="mono" id="netMonthly">€0</strong></div></div>
           </div>
-          <div class="row" style="margin-top:12px"><div><label>Years</label><input id="penYears" type="number" min="1" max="60" step="1" value="40"></div><div><label>&nbsp;</label><button id="calcPension" class="primary" type="button">Calculate</button></div></div>
-          <div class="kpis"><div class="kpi"><span>Employee €/yr</span><strong class="mono" id="penEE">€0</strong></div><div class="kpi"><span>Employer €/yr</span><strong class="mono" id="penER">€0</strong></div><div class="kpi"><span>Monthly total</span><strong class="mono" id="penMonthly">€0</strong></div><div class="kpi"><span>Projected pot</span><strong class="mono" id="penPot">€0</strong></div></div>
         </div>
+        <div class="card"><h2>Tax split</h2><div class="chart"><svg id="chartTaxPie" viewBox="0 0 440 240" width="100%" height="100%"></svg></div><div class="legend" id="legendTax"></div></div>
       </div>
-      <div class="card"><h2>Growth over time</h2><div class="chart"><svg id="chartPension" viewBox="0 0 420 260" width="100%" height="100%"></svg></div></div>
-    </div>
-  </section>
+    </section>
 
-  <!-- TAX -->
-  <section id="tax" class="page">
-    <div class="split">
-      <div>
-        <h1>Tax (Ireland 2025)</h1>
-        <p class="hint">PAYE + USC + PRSI. Uses your Salary from page 1.</p>
-        <div class="card">
-          <div class="row3">
-            <div><label>Status</label><select id="status"><option value="single" selected>Single</option><option value="married_one">Married (one income)</option><option value="married_two">Married (both incomes)</option><option value="single_parent">Single parent</option></select></div>
-            <div><label>Base tax credits €/yr</label><input id="credits" type="number" min="0" step="1" value="4000"></div>
-            <div><label>Rent tax credit €/yr</label><input id="rentCredit" type="number" min="0" step="1" value="0"></div>
+    <!-- EXPENSES -->
+    <section id="expenses" class="page">
+      <div class="split">
+        <div>
+          <h1>Expenses</h1>
+          <p class="hint">Add items and choose frequency. Update totals to refresh bars.</p>
+          <div class="card">
+            <div class="row" style="margin-top:4px"><div><button id="addExp" type="button" class="ghost">+ Add expense</button></div><div><button id="clearExp" type="button" class="ghost">Clear</button></div><div><button id="calcExp" type="button" class="primary">Update</button></div></div>
+            <table id="expTable" style="margin-top:6px"><thead><tr><th>Name</th><th>Amount</th><th>Freq</th><th>Annualised</th><th></th></tr></thead><tbody></tbody><tfoot><tr><td colspan="3" style="text-align:right">Total (annual)</td><td id="expTotal" class="mono">€0</td><td></td></tr><tr><td colspan="3" style="text-align:right">Total (monthly)</td><td id="expTotalMonthly" class="mono">€0</td><td></td></tr></tfoot></table>
           </div>
-          <div class="row3" style="margin-top:12px"><div><label>Medical expenses eligible (€)</label><input id="medicalEligible" type="number" min="0" step="1" value="0"></div><div><label>&nbsp;</label><button id="calcTax" class="primary" type="button">Calculate</button></div><div><label>&nbsp;</label><div class="kpi"><span>Using gross</span><strong class="mono" id="taxUsingGross">€0</strong></div></div></div>
-          <div class="kpis"><div class="kpi"><span>PAYE</span><strong class="mono" id="outPAYE">€0</strong></div><div class="kpi"><span>USC</span><strong class="mono" id="outUSC">€0</strong></div><div class="kpi"><span>PRSI</span><strong class="mono" id="outPRSI">€0</strong></div><div class="kpi"><span>Total tax</span><strong class="mono" id="outTax">€0</strong></div></div>
-          <div class="kpis" style="grid-template-columns:repeat(2,1fr)"><div class="kpi"><span>Net annual</span><strong class="mono" id="netAnnual">€0</strong></div><div class="kpi"><span>Net monthly</span><strong class="mono" id="netMonthly">€0</strong></div></div>
         </div>
+        <div class="card"><h2>Where it goes</h2><div class="chart"><svg id="chartExpenses" viewBox="0 0 440 240" width="100%" height="100%"></svg></div><div class="legend"><span>↔ Category</span><span>↕ € / month</span></div></div>
       </div>
-      <div class="card"><h2>Tax split</h2><div class="chart"><svg id="chartTaxPie" viewBox="0 0 420 260" width="100%" height="100%"></svg></div><div class="legend" id="legendTax"></div></div>
-    </div>
-  </section>
+    </section>
 
-  <!-- EXPENSES -->
-  <section id="expenses" class="page">
-    <div class="split">
-      <div>
-        <h1>Expenses</h1>
-        <div class="card">
-          <div class="row" style="margin-top:6px"><div><button id="addExp" type="button" class="ghost">+ Add expense</button></div><div><button id="clearExp" type="button" class="ghost">Clear</button></div><div><button id="calcExp" type="button" class="primary">Update</button></div></div>
-          <table class="mt12" id="expTable" style="width:100%;border-collapse:collapse;margin-top:10px"><thead><tr><th>Name</th><th>Amount</th><th>Freq</th><th>Annualised</th><th></th></tr></thead><tbody></tbody><tfoot><tr><td colspan="3" style="text-align:right">Total (annual)</td><td id="expTotal" class="mono">€0</td><td></td></tr><tr><td colspan="3" style="text-align:right">Total (monthly)</td><td id="expTotalMonthly" class="mono">€0</td><td></td></tr></tfoot></table>
-        </div>
-      </div>
-      <div class="card"><h2>Where it goes</h2><div class="chart"><svg id="chartExpenses" viewBox="0 0 420 260" width="100%" height="100%"></svg></div></div>
-    </div>
-  </section>
-
-  <!-- GOALS -->
-  <section id="goals" class="page">
-    <div class="split">
-      <div>
-        <h1>Goals</h1>
-        <div class="card">
-          <div class="row" style="margin-top:6px"><div><label>Goal amount (€)</label><input id="goalAmount" type="number" min="0" step="1" value="10000"></div><div><label>Current saved (€)</label><input id="goalCurrent" type="number" min="0" step="1" value="0"></div></div>
-          <div class="row" style="margin-top:12px"><div><label>Monthly contribution (€)</label><input id="goalMonthly" type="number" min="0" step="1" value="500"></div><div><label>&nbsp;</label><button id="calcGoal" class="primary" type="button">Calculate goal</button></div></div>
-          <div class="kpis" style="grid-template-columns:repeat(3,1fr)"><div class="kpi"><span>Months to goal</span><strong class="mono" id="goalMonths">—</strong></div><div class="kpi"><span>Target date</span><strong class="mono" id="goalDate">—</strong></div><div class="kpi"><span>Monthly savings (for pie)</span><strong class="mono" id="ovSaveMo">€0</strong></div></div>
-        </div>
-      </div>
-      <div class="card"><h2>Goal timeline</h2><div class="chart"><svg id="chartGoal" viewBox="0 0 420 260" width="100%" height="100%"></svg></div></div>
-    </div>
-  </section>
-
-  <!-- OVERVIEW -->
-  <section id="overview" class="page">
-    <div class="split">
-      <div>
-        <h1>Overview</h1>
-        <div class="card">
-          <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
-            <div class="kpi"><span>Net monthly</span><strong class="mono" id="spNetMonthly">€0</strong></div>
-            <div class="kpi"><span>Expenses monthly</span><strong class="mono" id="spExpMonthly">€0</strong></div>
-            <div class="kpi"><span>Pension (EE) monthly</span><strong class="mono" id="spPenMonthly">€0</strong></div>
-            <div class="kpi"><span>Savings monthly</span><strong class="mono" id="spSaveMonthly">€0</strong></div>
+    <!-- GOALS -->
+    <section id="goals" class="page">
+      <div class="split">
+        <div>
+          <h1>Goals</h1>
+          <p class="hint">Monthly contribution here becomes the <strong>Savings</strong> slice in the Overview.</p>
+          <div class="card">
+            <div class="row" style="margin-top:6px"><div><label>Goal amount (€)</label><input id="goalAmount" type="number" min="0" step="1" value="10000"></div><div><label>Current saved (€)</label><input id="goalCurrent" type="number" min="0" step="1" value="0"></div></div>
+            <div class="row" style="margin-top:6px"><div><label>Monthly contribution (€)</label><input id="goalMonthly" type="number" min="0" step="1" value="500"></div><div><label>&nbsp;</label><button id="calcGoal" class="primary" type="button">Calculate goal</button></div></div>
+            <div class="kpis" style="grid-template-columns:repeat(3,1fr)"><div class="kpi"><span>Months to goal</span><strong class="mono" id="goalMonths">—</strong></div><div class="kpi"><span>Target date</span><strong class="mono" id="goalDate">—</strong></div><div class="kpi"><span>Monthly savings (for pie)</span><strong class="mono" id="ovSaveMo">€0</strong></div></div>
           </div>
-          <div class="kpis"><div class="kpi"><span>Free to spend (mo)</span><strong class="mono" id="spFreeMonthly">€0</strong></div></div>
         </div>
+        <div class="card"><h2>Goal timeline</h2><div class="chart"><svg id="chartGoal" viewBox="0 0 440 240" width="100%" height="100%"></svg></div><div class="legend"><span><i class="dot" style="background:var(--accent2)"></i>Saved (€)</span><span>↔ Months / Years</span><span>↕ Amount (€)</span></div></div>
       </div>
-      <div class="card"><h2>Monthly split (pie)</h2><div class="chart"><svg id="chartSpendingPie" viewBox="0 0 420 260" width="100%" height="100%"></svg></div><div class="legend"><span><i class="dot" style="background:#7c5cff"></i>Expenses</span><span><i class="dot" style="background:#a78bfa"></i>Pension (EE)</span><span><i class="dot" style="background:#22c55e"></i>Savings (Goal)</span><span><i class="dot" style="background:#94a3b8"></i>Free</span></div></div>
-    </div>
-  </section>
-</main>
+    </section>
 
-<script>
+    <!-- OVERVIEW -->
+    <section id="overview" class="page">
+      <div class="split">
+        <div>
+          <h1>Overview</h1>
+          <p class="hint">Net Monthly split with labels. Savings comes from Goals; Pension (EE) is your % of wages.</p>
+          <div class="card">
+            <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+              <div class="kpi"><span>Net monthly</span><strong class="mono" id="spNetMonthly">€0</strong></div>
+              <div class="kpi"><span>Expenses monthly</span><strong class="mono" id="spExpMonthly">€0</strong></div>
+              <div class="kpi"><span>Pension (EE) monthly</span><strong class="mono" id="spPenMonthly">€0</strong></div>
+              <div class="kpi"><span>Savings monthly</span><strong class="mono" id="spSaveMonthly">€0</strong></div>
+            </div>
+            <div class="kpis"><div class="kpi"><span>Free to spend (mo)</span><strong class="mono" id="spFreeMonthly">€0</strong></div></div>
+          </div>
+        </div>
+        <div class="card"><h2>Monthly split (pie)</h2><div class="chart"><svg id="chartSpendingPie" viewBox="0 0 440 240" width="100%" height="100%"></svg></div><div class="legend" id="legendSp"></div></div>
+      </div>
+    </section>
+
+    <div class="footer hint">No data leaves your browser. 2025 Irish tax model; verify specifics for your case.</div>
+  </main>
+
+  <script>
   document.addEventListener('DOMContentLoaded', function(){
     const fmt = n => Number(n||0).toLocaleString(undefined,{style:'currency',currency:'EUR',maximumFractionDigits:0});
     const state = { annualGross:0, netAnnual:0, totalTax:0, expensesAnnual:0, eePct:0 };
-    const arcPath = (cx,cy,r,startDeg,endDeg)=>{ const toRad=a=> (a-90)*Math.PI/180; const a0=toRad(startDeg), a1=toRad(endDeg); const x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0); const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1); const large=(endDeg-startDeg)>180?1:0; return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`; };
+    const arcPath=(cx,cy,r,startDeg,endDeg)=>{const toRad=a=>(a-90)*Math.PI/180;const a0=toRad(startDeg),a1=toRad(endDeg);const x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0);const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);const large=(endDeg-startDeg)>180?1:0;return`M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`;};
 
     // ===== Salary =====
-    const freqEl=document.getElementById('freq'), amountEl=document.getElementById('amount'), hoursRow=document.getElementById('hoursRow'), hoursEl=document.getElementById('hours');
-    const toAnnual=(freq,amount,hours)=>{ const v=Number(amount||0); switch(freq){case 'annual':return v;case 'monthly':return v*12;case 'biweekly':return v*26;case 'weekly':return v*52;case 'hourly':return v*Number(hours||0)*52;default:return 0;}};
-    const fillSalary=a=>{ document.getElementById('salAnnual').textContent=fmt(a); document.getElementById('salMonthly').textContent=fmt(a/12); document.getElementById('salBiweekly').textContent=fmt(a/26); document.getElementById('salWeekly').textContent=fmt(a/52); };
-    document.getElementById('calcSalary').addEventListener('click', ()=>{ const a=toAnnual(freqEl.value,amountEl.value,hoursEl.value); state.annualGross=a; fillSalary(a); updateOverview(); });
+    const freqEl = document.getElementById('freq');
+    const amountEl = document.getElementById('amount');
+    const hoursRow = document.getElementById('hoursRow');
+    const hoursEl = document.getElementById('hours');
+    const toAnnual=(freq, amount, hours)=>{const v=Number(amount||0);switch(freq){case 'annual':return v;case 'monthly':return v*12;case 'biweekly':return v*26;case 'weekly':return v*52;case 'hourly':return v*Number(hours||0)*52;default:return 0;}};
+    const fillSalary=a=>{document.getElementById('salAnnual').textContent=fmt(a);document.getElementById('salMonthly').textContent=fmt(a/12);document.getElementById('salBiweekly').textContent=fmt(a/26);document.getElementById('salWeekly').textContent=fmt(a/52);};
+    document.getElementById('calcSalary').addEventListener('click',()=>{const a=toAnnual(freqEl.value,amountEl.value,hoursEl.value);state.annualGross=a;fillSalary(a);updateOverviewPie();});
     document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{freqEl.value='annual';amountEl.value=b.getAttribute('data-preset');hoursRow.style.display='none';}));
-    freqEl.addEventListener('change',()=>{hoursRow.style.display=freqEl.value==='hourly'?'':'none';}); document.getElementById('presetFT').addEventListener('click',()=>{hoursEl.value=39});
+    freqEl.addEventListener('change',()=>{hoursRow.style.display=freqEl.value==='hourly'?'':'none';});
+    document.getElementById('presetFT').addEventListener('click',()=>{hoursEl.value=39});
 
     // ===== Pension =====
-    function fvSeries(monthly, years, annualReturn){ const r=(annualReturn/100)/12; const n=years*12; if(r===0) return monthly*n; return monthly*((Math.pow(1+r,n)-1)/r); }
-    function renderPensionChart(monthly, years, annualReturn){ const svg=document.getElementById('chartPension'); svg.innerHTML=''; const w=420,h=260,p=36; const r=(annualReturn/100)/12; const n=years*12; const step=Math.max(1,Math.floor(n/120)); let vals=[],bal=0; for(let m=0;m<=n;m+=step){ if(m>0) bal=bal*(1+r)+monthly*step; vals.push({m,bal}); } const max=Math.max(1,...vals.map(v=>v.bal)); const sx=(w-2*p)/(vals.length-1||1), sy=(h-2*p)/max; let d=''; vals.forEach((v,i)=>{ const x=p+i*sx, y=h-p - v.bal*sy; d += (i?' L ':'M ')+x+' '+y; }); svg.innerHTML=`<path d="${d}" fill="none" stroke="#7c5cff" stroke-width="3"/>`; }
-    document.getElementById('calcPension').addEventListener('click', ()=>{ const eePct=Number(document.getElementById('eePct').value||0); state.eePct=eePct; const ee=eePct/100*state.annualGross; const er=Number(document.getElementById('erPct').value||0)/100*state.annualGross; const monthly=(ee+er)/12; const years=Number(document.getElementById('penYears').value||0), ret=Number(document.getElementById('retPct').value||0); const fv=fvSeries(monthly,years,ret); document.getElementById('penEE').textContent=fmt(ee); document.getElementById('penER').textContent=fmt(er); document.getElementById('penMonthly').textContent=fmt(monthly); document.getElementById('penPot').textContent=fmt(fv); renderPensionChart(monthly,years,ret); updateOverview(); });
+    const fvSeries=(monthly,years,annualReturn)=>{const r=(annualReturn/100)/12;const n=years*12;return r===0?monthly*n:monthly*((Math.pow(1+r,n)-1)/r)};
+    function renderPensionChart(monthly,years,annualReturn){const svg=document.getElementById('chartPension');svg.innerHTML='';const w=440,h=240,pL=40,pB=28,pT=14,pR=12;const r=(annualReturn/100)/12;const n=years*12;const step=Math.max(1,Math.floor(n/120));let vals=[],bal=0;for(let m=0;m<=n;m+=step){if(m>0) bal=bal*(1+r)+monthly*step;vals.push({m,bal});}
+      const max=Math.max(1,...vals.map(v=>v.bal));const sx=(w-pL-pR)/(vals.length-1||1), sy=(h-pT-pB)/max;let grid='';
+      // axes
+      grid+=`<line x1="${pL}" y1="${h-pB}" x2="${w-pR}" y2="${h-pB}" stroke="#1f2b3d"/>`;
+      grid+=`<line x1="${pL}" y1="${pT}" x2="${pL}" y2="${h-pB}" stroke="#1f2b3d"/>`;
+      // x ticks (years)
+      const yrs=Math.max(1,years);for(let y=0;y<=yrs;y+=Math.max(5,Math.round(yrs/6))){const i=Math.round((y/yrs)*(vals.length-1));const x=pL+i*sx;grid+=`<line x1="${x}" y1="${h-pB}" x2="${x}" y2="${h-pB-4}" stroke="#33455f"/><text x="${x}" y="${h-8}" fill="#9fb0c5" font-size="11" text-anchor="middle">${y}y</text>`}
+      // y ticks (€)
+      const yMarks=[0,0.25,0.5,0.75,1].map(fr=>fr*max);yMarks.forEach(v=>{const y=h-pB - v*sy;grid+=`<line x1="${pL}" y1="${y}" x2="${w-pR}" y2="${y}" stroke="#1f2b3d" stroke-dasharray="4 4"/><text x="${pL-6}" y="${y+4}" fill="#9fb0c5" font-size="11" text-anchor="end">${fmt(v)}</text>`});
+      // labels
+      grid+=`<text x="${(w)/2}" y="${h-2}" fill="#a7b4c7" font-size="12" text-anchor="middle">Years</text>`;
+      grid+=`<text x="12" y="${pT+6}" fill="#a7b4c7" font-size="12">€</text>`;
+      // line
+      let d='';vals.forEach((v,i)=>{const x=pL+i*sx;const y=h-pB - v.bal*sy;d+=(i?' L ':'M ')+x+' '+y;});
+      const endX=pL+(vals.length-1)*sx,endY=h-pB - vals[vals.length-1].bal*sy;svg.innerHTML=grid+`<path d="${d}" fill="none" stroke="${getCol(0)}" stroke-width="3"/>`+`<circle cx="${endX}" cy="${endY}" r="3.5" fill="${getCol(1)}"/>`+`<text x="${endX-6}" y="${endY-8}" fill="#e5e7eb" font-size="11" text-anchor="end">${fmt(vals[vals.length-1].bal)}</text>`;}
+    document.getElementById('calcPension').addEventListener('click',()=>{const eePct=Number(document.getElementById('eePct').value||0);state.eePct=eePct;const ee=eePct/100*state.annualGross;const er=Number(document.getElementById('erPct').value||0)/100*state.annualGross;const monthly=(ee+er)/12;const years=Number(document.getElementById('penYears').value||0), ret=Number(document.getElementById('retPct').value||0);const fv=fvSeries(monthly,years,ret);document.getElementById('penEE').textContent=fmt(ee);document.getElementById('penER').textContent=fmt(er);document.getElementById('penMonthly').textContent=fmt(monthly);document.getElementById('penPot').textContent=fmt(fv);renderPensionChart(monthly,years,ret);updateOverviewPie();});
 
     // ===== Tax =====
-    const TAX={ standard:0.20,higher:0.40,bands:{single:44000,married_one:53000,married_two:88000,single_parent:49000}, usc:[{upTo:12012,rate:0.005},{upTo:27382,rate:0.02},{upTo:70044,rate:0.03},{upTo:Infinity,rate:0.08}], prsi:{weeklyNil:352,creditStart:352.01,creditEnd:424,creditMax:12,rate1:0.041,rate2:0.042,weeks1:39,weeks2:13}};
-    const calcPAYE=(annual,totalCredits)=>{ const band=TAX.bands[document.getElementById('status').value]||TAX.bands.single; const at20=Math.min(annual,band), at40=Math.max(0,annual-band); let t=at20*TAX.standard+at40*TAX.higher; t-=Number(totalCredits||0); return Math.max(0,t||0); };
-    const calcUSC=annual=>{ if(annual<13000) return 0; let rem=annual,last=0,u=0; for(const b of TAX.usc){ const cap=Math.min(rem,b.upTo-last); if(cap>0){u+=cap*b.rate; rem-=cap; last=b.upTo;} if(rem<=0) break;} return Math.max(0,u||0); };
-    const weeklyPRSI=(weekly,isAfter)=>{ if(weekly<=TAX.prsi.weeklyNil) return 0; const rate=isAfter?TAX.prsi.rate2:TAX.prsi.rate1; let ch=weekly*rate; if(weekly>TAX.prsi.creditStart && weekly<=TAX.prsi.creditEnd){ const p=(TAX.prsi.creditEnd-weekly)/(TAX.prsi.creditEnd-TAX.prsi.creditStart); ch=Math.max(0,ch - TAX.prsi.creditMax*p);} return Math.max(0,ch||0); };
-    const calcPRSI=annual=>{ const w=annual/52; return weeklyPRSI(w,false)*TAX.prsi.weeks1 + weeklyPRSI(w,true)*TAX.prsi.weeks2; };
-    function renderTaxPie(gross,paye,usc,prsi){ const svg=document.getElementById('chartTaxPie'); const legend=document.getElementById('legendTax'); if(!svg||!legend) return; const w=420,h=260,cx=210,cy=130,r=90; const net=Math.max(0,(gross||0)-(paye+usc+prsi)); const items=[{name:'PAYE',val:Math.max(0,paye),color:'#7c5cff'},{name:'USC',val:Math.max(0,usc),color:'#22c55e'},{name:'PRSI',val:Math.max(0,prsi),color:'#94a3b8'},{name:'Net',val:Math.max(0,net),color:'#f59e0b'}]; const total=items.reduce((s,i)=>s+i.val,0); if(!isFinite(total)||total<=0){ svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="90" fill="#0c1219" stroke="#1f2b3d"/><text x="${cx}" y="${cy+4}" text-anchor="middle" fill="#9fb0c5" font-size="14">Calculate tax to see chart</text>`; legend.innerHTML=''; return;} svg.innerHTML=''; legend.innerHTML=''; let start=0; for(const it of items){ const deg=360*(it.val/total); if(deg<=0) continue; const p=arcPath(cx,cy,r,start,start+deg); svg.insertAdjacentHTML('beforeend',`<path d="${p}" fill="${it.color}"><title>${it.name}: ${fmt(it.val)}</title></path>`); legend.insertAdjacentHTML('beforeend',`<span><i class="dot" style="background:${it.color}"></i>${it.name} — ${fmt(it.val)}</span>`); start+=deg; } svg.insertAdjacentHTML('beforeend',`<text x="${cx}" y="${cy+5}" text-anchor="middle" fill="#e5e7eb" font-size="14">Total: ${fmt(gross)}</text>`); }
-    document.getElementById('calcTax').addEventListener('click',()=>{ const a=Number(state.annualGross||0); document.getElementById('taxUsingGross').textContent=fmt(a); const baseCredits=Number(document.getElementById('credits').value||0); const rentCredit=Number(document.getElementById('rentCredit').value||0); const med=Number(document.getElementById('medicalEligible').value||0); const medRelief=med*0.20; const credits=baseCredits+rentCredit+medRelief; const paye=calcPAYE(a,credits), usc=calcUSC(a), prsi=calcPRSI(a); const total=paye+usc+prsi; const net=Math.max(0,a-total); state.totalTax=total; state.netAnnual=net; document.getElementById('outPAYE').textContent=fmt(paye); document.getElementById('outUSC').textContent=fmt(usc); document.getElementById('outPRSI').textContent=fmt(prsi); document.getElementById('outTax').textContent=fmt(total); document.getElementById('netAnnual').textContent=fmt(net); document.getElementById('netMonthly').textContent=fmt(net/12); renderTaxPie(a,paye,usc,prsi); updateOverview(); });
+    const TAX={standard:0.20,higher:0.40,bands:{single:44000,married_one:53000,married_two:88000,single_parent:49000},usc:[{upTo:12012,rate:0.005},{upTo:27382,rate:0.02},{upTo:70044,rate:0.03},{upTo:Infinity,rate:0.08}],prsi:{weeklyNil:352,creditStart:352.01,creditEnd:424,creditMax:12,rate1:0.041,rate2:0.042,weeks1:39,weeks2:13}};
+    const calcPAYE=(annual,credits)=>{const band=TAX.bands[document.getElementById('status').value]||TAX.bands.single;const at20=Math.min(annual,band),at40=Math.max(0,annual-band);let t=at20*TAX.standard+at40*TAX.higher;return Math.max(0,(t-Number(credits||0))||0)};
+    const calcUSC=a=>{if(a<13000) return 0;let rem=a,last=0,u=0;for(const b of TAX.usc){const cap=Math.min(rem,b.upTo-last);if(cap>0){u+=cap*b.rate;rem-=cap;last=b.upTo;}if(rem<=0)break;}return Math.max(0,u||0)};
+    const weeklyPRSI=(w,isAfter)=>{if(w<=TAX.prsi.weeklyNil) return 0;const rate=isAfter?TAX.prsi.rate2:TAX.prsi.rate1;let ch=w*rate;if(w>TAX.prsi.creditStart && w<=TAX.prsi.creditEnd){const p=(TAX.prsi.creditEnd-w)/(TAX.prsi.creditEnd-TAX.prsi.creditStart);ch=Math.max(0,ch - TAX.prsi.creditMax*p);}return Math.max(0,ch||0)};
+    const calcPRSI=a=>{const w=a/52;return weeklyPRSI(w,false)*TAX.prsi.weeks1 + weeklyPRSI(w,true)*TAX.prsi.weeks2};
+    function renderTaxPie(gross,paye,usc,prsi){const svg=document.getElementById('chartTaxPie');const legend=document.getElementById('legendTax');if(!svg||!legend) return;svg.innerHTML='';legend.innerHTML='';const cx=220,cy=120,r=86;const net=Math.max(0,(gross||0)-(paye+usc+prsi));const items=[{n:'PAYE',v:paye,c:getCol(0)},{n:'USC',v:usc,c:getCol(1)},{n:'PRSI',v:prsi,c:getCol(2)},{n:'Net',v:net,c:getCol(3)}];const total=items.reduce((s,i)=>s+Math.max(0,i.v),0);if(!isFinite(total)||total<=0){svg.innerHTML=`<text x="${cx}" y="${cy}" text-anchor="middle" fill="#9fb0c5" font-size="14">Calculate to see split</text>`;return;}let start=0;items.forEach(it=>{const val=Math.max(0,it.v);const deg=360*(val/total);if(deg<=0) return;const path=arcPath(cx,cy,r,start,start+deg);svg.insertAdjacentHTML('beforeend',`<path d="${path}" fill="${it.c}"><title>${it.n}: ${fmt(val)} (${Math.round(100*val/total)}%)</title></path>`);const mid=start+deg/2;const rx=cx+ (r*0.62)*Math.cos((mid-90)*Math.PI/180);const ry=cy+ (r*0.62)*Math.sin((mid-90)*Math.PI/180);svg.insertAdjacentHTML('beforeend',`<text x="${rx}" y="${ry}" fill="#0b0f14" font-weight="700" font-size="11" text-anchor="middle">${Math.round(100*val/total)}%</text>`);start+=deg;legend.insertAdjacentHTML('beforeend',`<span><i class="dot" style="background:${it.c}"></i>${it.n} — ${fmt(val)}</span>`);});svg.insertAdjacentHTML('beforeend',`<text x="${cx}" y="${cy+6}" text-anchor="middle" fill="#e5e7eb" font-size="13">Total: ${fmt(gross)}</text>`)}
+    document.getElementById('calcTax').addEventListener('click',()=>{const a=Number(state.annualGross||0);document.getElementById('taxUsingGross').textContent=fmt(a);const base=Number(document.getElementById('credits').value||0);const rent=Number(document.getElementById('rentCredit').value||0);const med=Number(document.getElementById('medicalEligible').value||0)*0.20;const credits=base+rent+med;const paye=calcPAYE(a,credits), usc=calcUSC(a), prsi=calcPRSI(a);const total=paye+usc+prsi;const net=Math.max(0,a-total);state.totalTax=total;state.netAnnual=net;document.getElementById('outPAYE').textContent=fmt(paye);document.getElementById('outUSC').textContent=fmt(usc);document.getElementById('outPRSI').textContent=fmt(prsi);document.getElementById('outTax').textContent=fmt(total);document.getElementById('netAnnual').textContent=fmt(net);document.getElementById('netMonthly').textContent=fmt(net/12);renderTaxPie(a,paye,usc,prsi);updateOverviewPie();});
 
     // ===== Expenses =====
-    const tbody=document.querySelector('#expTable tbody'); const expenses=[]; const expAnnual=(amount,freq)=>{const v=Number(amount||0); if(freq==='weekly') return v*52; if(freq==='monthly') return v*12; return v;};
-    function renderExpenses(){ tbody.innerHTML=''; let total=0; const svg=document.getElementById('chartExpenses'); svg.innerHTML=''; const w=420,h=260,p=24; let cats=[]; expenses.forEach((e,i)=>{ const ann=expAnnual(e.amount,e.freq); cats.push({name:e.name||`Item ${i+1}`, val:ann}); const tr=document.createElement('tr'); tr.innerHTML=`<td><input data-i="${i}" data-k="name" value="${e.name||''}"></td><td><input type="number" step="0.01" min="0" data-i="${i}" data-k="amount" value="${e.amount||0}"></td><td><select data-i="${i}" data-k="freq"><option value="monthly" ${e.freq==='monthly'?'selected':''}>Monthly</option><option value="weekly" ${e.freq==='weekly'?'selected':''}>Weekly</option><option value="annual" ${e.freq==='annual'?'selected':''}>Annual</option></select></td><td class="mono">${fmt(ann)}</td><td><button class="ghost" data-remove="${i}">✕</button></td>`; tbody.appendChild(tr); total+=ann; }); document.getElementById('expTotal').textContent=fmt(total); document.getElementById('expTotalMonthly').textContent=fmt(total/12);
-      // bars
-      const sorted=cats.filter(i=>i.val>0).sort((a,b)=>b.val-a.val).slice(0,8); const max=Math.max(1,...sorted.map(i=>i.val)); const barH=(h-2*p)/(sorted.length||1)-6; let y=p; sorted.forEach((it,idx)=>{ const wid=(w-2*p)*(it.val/max); svg.innerHTML += `<rect x="${p}" y="${y}" width="${wid}" height="${barH}" rx="6" fill="#7c5cff" opacity="${0.5+0.05*idx}"></rect>` + `<text x="${p+6}" y="${y+barH-6}" fill="#0b0f14" font-size="12" font-weight="700">${it.name}</text>` + `<text x="${p+wid-6}" y="${y+barH-6}" fill="#e5e7eb" font-size="12" text-anchor="end">${fmt(it.val/12)}/mo</text>`; y+=barH+6; }); return total; }
-    document.getElementById('addExp').addEventListener('click',()=>{expenses.push({name:'',amount:0,freq:'monthly'}); renderExpenses();});
-    document.getElementById('clearExp').addEventListener('click',()=>{expenses.length=0; renderExpenses();});
-    tbody.addEventListener('input',e=>{ const i=e.target.getAttribute('data-i'); const k=e.target.getAttribute('data-k'); if(i!==null){ expenses[i][k]= k==='amount'? Number(e.target.value||0): e.target.value; }});
-    tbody.addEventListener('click',e=>{ const i=e.target.getAttribute('data-remove'); if(i!==null){ expenses.splice(i,1); renderExpenses(); }});
-    document.getElementById('calcExp').addEventListener('click',()=>{ state.expensesAnnual=renderExpenses(); updateOverview(); });
-    expenses.push({name:'Rent',amount:0,freq:'monthly'},{name:'Utilities',amount:0,freq:'monthly'},{name:'Transport',amount:0,freq:'monthly'}); renderExpenses();
+    const tbody=document.querySelector('#expTable tbody');const expenses=[];const expAnnual=(amt,f)=>{const v=Number(amt||0);if(f==='weekly')return v*52;if(f==='monthly')return v*12;return v};
+    function renderExpenses(){tbody.innerHTML='';let total=0;const svg=document.getElementById('chartExpenses');svg.innerHTML='';const w=440,h=240,p=22;let cats=[];expenses.forEach((e,i)=>{const ann=expAnnual(e.amount,e.freq);cats.push({n:e.name||`Item ${i+1}`,v:ann});const tr=document.createElement('tr');tr.innerHTML=`<td><input data-i="${i}" data-k="name" value="${e.name||''}"></td><td><input type="number" step="0.01" min="0" data-i="${i}" data-k="amount" value="${e.amount||0}"></td><td><select data-i="${i}" data-k="freq"><option value="monthly" ${e.freq==='monthly'?'selected':''}>Monthly</option><option value="weekly" ${e.freq==='weekly'?'selected':''}>Weekly</option><option value="annual" ${e.freq==='annual'?'selected':''}>Annual</option></select></td><td class="mono">${fmt(ann)}</td><td><button class="ghost" data-remove="${i}">✕</button></td>`;tbody.appendChild(tr);total+=ann;});document.getElementById('expTotal').textContent=fmt(total);document.getElementById('expTotalMonthly').textContent=fmt(total/12);
+      const sorted=cats.filter(i=>i.v>0).sort((a,b)=>b.v-a.v).slice(0,8);const max=Math.max(1,...sorted.map(i=>i.v));const barH=(h-2*p)/(sorted.length||1)-6;let y=p;sorted.forEach((it,idx)=>{const wid=(w-2*p)*(it.v/max);const col=getCol(idx%6);svg.innerHTML+=`<rect x="${p}" y="${y}" width="${wid}" height="${barH}" rx="6" fill="${col}"/>`+`<text x="${p+6}" y="${y+barH-6}" fill="#0b0f14" font-size="11" font-weight="700">${it.n}</text>`+`<text x="${p+wid-6}" y="${y+barH-6}" fill="#e5e7eb" font-size="11" text-anchor="end">${fmt(it.v/12)}/mo</text>`;y+=barH+6;});return total;}
+    document.getElementById('addExp').addEventListener('click',()=>{expenses.push({name:'',amount:0,freq:'monthly'});renderExpenses();});
+    document.getElementById('clearExp').addEventListener('click',()=>{expenses.length=0;renderExpenses();});
+    tbody.addEventListener('input',e=>{const i=e.target.getAttribute('data-i');const k=e.target.getAttribute('data-k');if(i!==null){expenses[i][k]=k==='amount'?Number(e.target.value||0):e.target.value;}});
+    tbody.addEventListener('click',e=>{const i=e.target.getAttribute('data-remove');if(i!==null){expenses.splice(i,1);renderExpenses();}});
+    document.getElementById('calcExp').addEventListener('click',()=>{state.expensesAnnual=renderExpenses();updateOverviewPie();});
+    expenses.push({name:'Rent',amount:0,freq:'monthly'},{name:'Utilities',amount:0,freq:'monthly'},{name:'Transport',amount:0,freq:'monthly'});renderExpenses();
 
     // ===== Goals =====
-    function renderGoalTimeline(){ const svg=document.getElementById('chartGoal'); svg.innerHTML=''; const w=420,h=260,p=36; const goal=Number(document.getElementById('goalAmount').value||0); const cur=Number(document.getElementById('goalCurrent').value||0); const mo=Number(document.getElementById('goalMonthly').value||0); if(goal<=0||mo<=0||cur>=goal){ return; } const months=Math.ceil((goal-cur)/mo); const vals=[]; for(let i=0;i<=months;i++){ vals.push(Math.min(goal,cur+i*mo)); } const max=goal; const sx=(w-2*p)/(vals.length-1||1), sy=(h-2*p)/max; let d=''; vals.forEach((v,i)=>{ const x=p+i*sx, y=h-p - v*sy; d += (i?' L ':'M ')+x+' '+y; }); svg.innerHTML = `<path d="${d}" fill="none" stroke="#22c55e" stroke-width="3"/>`; }
-    document.getElementById('calcGoal').addEventListener('click',()=>{ const goal=Number(document.getElementById('goalAmount').value||0); const cur=Number(document.getElementById('goalCurrent').value||0); const mo=Number(document.getElementById('goalMonthly').value||0); if(mo<=0||goal<=cur){ document.getElementById('goalMonths').textContent='—'; document.getElementById('goalDate').textContent='—'; document.getElementById('ovSaveMo').textContent=fmt(0); updateOverview(); return; } const months=Math.ceil((goal-cur)/mo); const target=new Date(); target.setMonth(target.getMonth()+months); document.getElementById('goalMonths').textContent=months; document.getElementById('goalDate').textContent=target.toLocaleDateString(); document.getElementById('ovSaveMo').textContent=fmt(mo); renderGoalTimeline(); updateOverview(); });
+    function renderGoalTimeline(){const svg=document.getElementById('chartGoal');svg.innerHTML='';const w=440,h=240,pL=40,pB=28,pT=14,pR=12;const goal=Number(document.getElementById('goalAmount').value||0);const cur=Number(document.getElementById('goalCurrent').value||0);const mo=Number(document.getElementById('goalMonthly').value||0);if(goal<=0||mo<=0||cur>=goal){return;}const months=Math.ceil((goal-cur)/mo);const vals=[];for(let i=0;i<=months;i++){vals.push(Math.min(goal,cur+i*mo));}const max=goal;const sx=(w-pL-pR)/(vals.length-1||1), sy=(h-pT-pB)/max;let grid='';grid+=`<line x1="${pL}" y1="${h-pB}" x2="${w-pR}" y2="${h-pB}" stroke="#1f2b3d"/>`+`<line x1="${pL}" y1="${pT}" x2="${pL}" y2="${h-pB}" stroke="#1f2b3d"/>`;
+      const years=Math.ceil(months/12);for(let y=0;y<=years;y++){const i=Math.min(vals.length-1,Math.round((y/years)*(vals.length-1)));const x=pL+i*sx;grid+=`<line x1="${x}" y1="${h-pB}" x2="${x}" y2="${h-pB-4}" stroke="#33455f"/><text x="${x}" y="${h-8}" fill="#9fb0c5" font-size="11" text-anchor="middle">${y}y</text>`}
+      const yMarks=[0,0.25,0.5,0.75,1].map(fr=>fr*max);yMarks.forEach(v=>{const y=h-pB - v*sy;grid+=`<line x1="${pL}" y1="${y}" x2="${w-pR}" y2="${y}" stroke="#1f2b3d" stroke-dasharray="4 4"/><text x="${pL-6}" y="${y+4}" fill="#9fb0c5" font-size="11" text-anchor="end">${fmt(v)}</text>`});grid+=`<text x="${(w)/2}" y="${h-2}" fill="#a7b4c7" font-size="12" text-anchor="middle">Months → Years</text>`;grid+=`<text x="12" y="${pT+6}" fill="#a7b4c7" font-size="12">€</text>`;
+      let d='';vals.forEach((v,i)=>{const x=pL+i*sx,y=h-pB - v*sy;d+=(i?' L ':'M ')+x+' '+y;});svg.innerHTML=grid+`<path d="${d}" fill="none" stroke="${getCol(4)}" stroke-width="3"/>`;}
+    document.getElementById('calcGoal').addEventListener('click',()=>{const goal=Number(document.getElementById('goalAmount').value||0);const cur=Number(document.getElementById('goalCurrent').value||0);const mo=Number(document.getElementById('goalMonthly').value||0);if(mo<=0||goal<=cur){document.getElementById('goalMonths').textContent='—';document.getElementById('goalDate').textContent='—';document.getElementById('ovSaveMo').textContent=fmt(0);updateOverviewPie();return;}const months=Math.ceil((goal-cur)/mo);const target=new Date();target.setMonth(target.getMonth()+months);document.getElementById('goalMonths').textContent=months;document.getElementById('goalDate').textContent=target.toLocaleDateString();document.getElementById('ovSaveMo').textContent=fmt(mo);renderGoalTimeline();updateOverviewPie();});
 
     // ===== Overview pie =====
-    function renderOverviewPie(){ const svg=document.getElementById('chartSpendingPie'); svg.innerHTML=''; const cx=210,cy=130,r=90; const netMo=state.netAnnual/12; const expMo=(state.expensesAnnual||0)/12; const eeMo=(state.eePct/100)*state.annualGross/12; const goalMo=Number(document.getElementById('goalMonthly').value||0); const freeMo=Math.max(0,netMo-expMo-eeMo-goalMo); const items=[{name:'Expenses',val:expMo,color:'#7c5cff'},{name:'Pension (EE)',val:eeMo,color:'#a78bfa'},{name:'Savings (Goal)',val:goalMo,color:'#22c55e'},{name:'Free',val:freeMo,color:'#94a3b8'}]; const total=Math.max(1,items.reduce((s,i)=>s+i.val,0)); let start=0; items.forEach(it=>{ const deg=360*(it.val/total); const p=arcPath(cx,cy,r,start,start+deg); svg.insertAdjacentHTML('beforeend',`<path d="${p}" fill="${it.color}"><title>${it.name}: ${fmt(it.val)}/mo</title></path>`); start+=deg; }); document.getElementById('spNetMonthly').textContent=fmt(netMo); document.getElementById('spExpMonthly').textContent=fmt(expMo); document.getElementById('spPenMonthly').textContent=fmt(eeMo); document.getElementById('spSaveMonthly').textContent=fmt(goalMo); document.getElementById('spFreeMonthly').textContent=fmt(freeMo); }
-    function updateOverview(){ renderOverviewPie(); }
+    function getCol(i){return ['#7c5cff','#22c55e','#94a3b8','#f59e0b','#06b6d4','#a78bfa','#10b981','#eab308','#f97316','#3b82f6'][i%10];}
+    function renderOverviewPie(){const svg=document.getElementById('chartSpendingPie');const legend=document.getElementById('legendSp');svg.innerHTML='';legend.innerHTML='';const cx=220,cy=120,r=86;const netMo=state.netAnnual/12;const expMo=(state.expensesAnnual||0)/12;const eeMo=(state.eePct/100)*state.annualGross/12;const goalMo=Number(document.getElementById('goalMonthly').value||0);const freeMo=Math.max(0,netMo-expMo-eeMo-goalMo);const items=[{n:'Expenses',v:expMo,c:getCol(0)},{n:'Pension (EE)',v:eeMo,c:getCol(5)},{n:'Savings (Goal)',v:goalMo,c:getCol(1)},{n:'Free',v:freeMo,c:getCol(2)}];const total=Math.max(1,items.reduce((s,i)=>s+i.v,0));let start=0;items.forEach(it=>{const deg=360*(it.v/total);const path=arcPath(cx,cy,r,start,start+deg);svg.insertAdjacentHTML('beforeend',`<path d="${path}" fill="${it.c}"><title>${it.n}: ${fmt(it.v)}/mo (${Math.round(100*it.v/total)}%)</title></path>`);const mid=start+deg/2;const rx=cx+(r*0.62)*Math.cos((mid-90)*Math.PI/180);const ry=cy+(r*0.62)*Math.sin((mid-90)*Math.PI/180);svg.insertAdjacentHTML('beforeend',`<text x="${rx}" y="${ry}" fill="#0b0f14" font-weight="700" font-size="11" text-anchor="middle">${Math.round(100*it.v/total)}%</text>`);legend.insertAdjacentHTML('beforeend',`<span><i class="dot" style="background:${it.c}"></i>${it.n} — ${fmt(it.v)}/mo</span>`);start+=deg;});svg.insertAdjacentHTML('beforeend',`<text x="${cx}" y="${cy+6}" text-anchor="middle" fill="#e5e7eb" font-size="13">Net: ${fmt(netMo)}/mo</text>`);document.getElementById('spNetMonthly').textContent=fmt(netMo);document.getElementById('spExpMonthly').textContent=fmt(expMo);document.getElementById('spPenMonthly').textContent=fmt(eeMo);document.getElementById('spSaveMonthly').textContent=fmt(goalMo);document.getElementById('spFreeMonthly').textContent=fmt(freeMo);}
+    function updateOverviewPie(){renderOverviewPie();}
 
-    // ===== Init placeholders (no fake €1 totals) =====
-    (function init(){ const taxSvg=document.getElementById('chartTaxPie'); if(taxSvg){ taxSvg.innerHTML = `<circle cx="210" cy="130" r="90" fill="#0c1219" stroke="#1f2b3d"/><text x="210" y="135" text-anchor="middle" fill="#9fb0c5" font-size="14">Calculate tax to see chart</text>`; const leg=document.getElementById('legendTax'); if(leg) leg.innerHTML=''; } renderOverviewPie(); renderGoalTimeline(); })();
+    // init placeholders
+    (function init(){const taxSvg=document.getElementById('chartTaxPie');if(taxSvg){taxSvg.innerHTML=`<circle cx="220" cy="120" r="86" fill="#0c1219" stroke="#1f2b3d"/><text x="220" y="125" text-anchor="middle" fill="#9fb0c5" font-size="13">Calculate to see split</text>`;}renderPensionChart(0,40,5);renderGoalTimeline();renderOverviewPie();})();
   });
-</script>
+  </script>
 </body>
 </html>
